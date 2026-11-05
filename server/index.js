@@ -5,6 +5,7 @@ import express from 'express';
 import multer from 'multer';
 import { config, ROOT } from './config.js';
 import { db, migrate } from './db.js';
+import { visbody } from './visbody.js';
 
 migrate();
 fs.mkdirSync(config.uploadDir, { recursive: true });
@@ -79,6 +80,13 @@ app.get('/api/candidature', (req, res) => {
   res.json(db.prepare('SELECT * FROM candidature ORDER BY creato_il DESC').all());
 });
 
+app.use('/api/visbody', visbody);
+
+app.use('/api', (_req, res) => res.status(404).json({ ok: false, errore: 'Risorsa non trovata.' }));
+app.use((err, _req, res, _next) => {
+  console.error(err);
+  res.status(500).json({ ok: false, errore: 'Errore interno, riprova tra poco.' });
+});
 app.use((_req, res) => res.status(404).sendFile(path.join(ROOT, 'public', '404.html')));
 
 app.listen(config.port, () => {

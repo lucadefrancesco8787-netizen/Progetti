@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Visbody — Zeta Club | Prenota la tua analisi corporea 3D</title>
+  <meta name="description" content="Prenota la visita Visbody al Zeta Club: analisi della composizione corporea in 3D con un trainer, per costruire la tua scheda su misura.">
+  <meta name="theme-color" content="#0b0c0c">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="header" id="header">
+  <div class="wrap header__inner">
+    <a href="/" class="logo" aria-label="Zeta Club, torna alla home">
+      <svg viewBox="0 0 48 64" aria-hidden="true"><use href="#zmark"/></svg>
+      <span class="logo__text"><span class="logo__name">ZETA<b>CLUB</b></span><span class="logo__tag">gym culture</span></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="/#club">Il Club</a>
+      <a href="/corsi">Corsi</a>
+      <a href="/visbody" aria-current="page">Visbody</a>
+      <a href="/#sedi">Sedi</a>
+      <a href="/#lavora">Lavora con noi</a>
+      <a href="#prenota" class="btn btn--light">Prenota <span class="arrow">→</span></a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Apri il menu" aria-expanded="false"><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+  <!-- HERO con scansione animata -->
+  <section class="vb-hero on-dark">
+    <div class="wrap vb-hero__grid">
+      <div class="vb-hero__text">
+        <span class="eyebrow" data-fade>Analisi corporea 3D</span>
+        <h1 class="display" aria-label="Visbody. Il tuo corpo in numeri.">
+          <span class="line" style="display:block;overflow:hidden"><span style="display:inline-block" data-split>Il tuo corpo,</span></span>
+          <span class="line" style="display:block;overflow:hidden"><span style="display:inline-block" class="grad-text" data-split>in numeri.</span></span>
+        </h1>
+        <p data-fade>Con il <strong>Visbody</strong> misuriamo peso, massa grassa, massa muscolare e postura in pochi minuti. Poi un nostro trainer legge i dati con te e costruisce la tua scheda su misura.</p>
+        <div class="hero__ctas" data-fade>
+          <a href="#prenota" class="btn btn--light">Prenota la visita <span class="arrow">→</span></a>
+          <a href="#come-funziona" class="btn btn--ghost" style="color:#fff">Come funziona</a>
+        </div>
+      </div>
+
+      <div class="scan" aria-hidden="true">
+        <svg class="scan__svg" viewBox="0 0 200 470">
+          <defs>
+            <linearGradient id="scanGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#14b3ac"/><stop offset=".5" stop-color="#3fc26b"/><stop offset="1" stop-color="#d6e33b"/>
+            </linearGradient>
+            <linearGradient id="beamGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#d6e33b" stop-opacity="0"/><stop offset=".85" stop-color="#d6e33b" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="1"/>
+            </linearGradient>
+            <pattern id="mesh" width="200" height="7" patternUnits="userSpaceOnUse">
+              <rect x="0" y="3" width="200" height="1.1" fill="#3fc26b" opacity=".45"/>
+            </pattern>
+            <radialGradient id="bodyGlow" cx=".5" cy=".4" r=".6">
+              <stop offset="0" stop-color="#14b3ac" stop-opacity=".28"/><stop offset="1" stop-color="#14b3ac" stop-opacity="0"/>
+            </radialGradient>
+            <clipPath id="bodyClip"><use href="#bodyShape"/></clipPath>
+            <path id="bodyShape" d="M88 80 L112 80 L114 94 C140 98 156 106 160 126 L172 232 C173 242 160 244 158 234 L146 142 L142 142 L144 252 L140 442 C139 454 118 454 118 442 L106 272 L94 272 L82 442 C82 454 61 454 60 442 L56 252 L58 142 L54 142 L42 234 C40 244 27 242 28 232 L40 126 C44 106 60 98 86 94 Z M100 14 A31 31 0 1 1 99.9 14 Z"/>
+          </defs>
+          <use href="#bodyShape" fill="url(#bodyGlow)"/>
+          <use href="#bodyShape" fill="url(#mesh)"/>
+          <use href="#bodyShape" fill="none" stroke="url(#scanGrad)" stroke-width="1.6"/>
+          <g clip-path="url(#bodyClip)"><rect class="scan__beam" x="0" y="-60" width="200" height="60" fill="url(#beamGrad)"/></g>
+          <line class="scan__line" x1="-20" x2="220" y1="0" y2="0" stroke="#fff" stroke-width="1.2" opacity=".85"/>
+        </svg>
+        <div class="scan__chip" style="--x:-6%;--y:16%"><small>Massa grassa</small><strong>18,4%</strong></div>
+        <div class="scan__chip" style="--x:72%;--y:28%"><small>Massa muscolare</small><strong>32,1 kg</strong></div>
+        <div class="scan__chip" style="--x:-10%;--y:58%"><small>Metabolismo basale</small><strong>1.720 kcal</strong></div>
+        <div class="scan__chip" style="--x:70%;--y:70%"><small>Acqua corporea</small><strong>55,2%</strong></div>
+        <span class="scan__note">Valori di esempio</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- COSA MISURA -->
+  <section class="section">
+    <div class="wrap">
+      <span class="eyebrow">Cosa misura</span>
+      <h2 class="display vb-h2" data-reveal>Oltre la<br><span class="grad-text">bilancia.</span></h2>
+      <p class="vb-intro" data-reveal>La bilancia ti dice quanto pesi. Il Visbody ti dice <em>di cosa</em> sei fatto, e dove: è il punto di partenza per allenarti con precisione e misurare i progressi nel tempo.</p>
+      <div class="metrics">
+        <div class="metric" data-reveal><span class="metric__n">01</span><h3>Peso e BMI</h3><p>Il punto di partenza, letto nel contesto giusto.</p></div>
+        <div class="metric" data-reveal><span class="metric__n">02</span><h3>Massa grassa</h3><p>Percentuale e distribuzione, anche il grasso viscerale.</p></div>
+        <div class="metric" data-reveal><span class="metric__n">03</span><h3>Massa muscolare</h3><p>Totale e per segmento: braccia, tronco, gambe.</p></div>
+        <div class="metric" data-reveal><span class="metric__n">04</span><h3>Acqua corporea</h3><p>Livello di idratazione e acqua intra ed extracellulare.</p></div>
+        <div class="metric" data-reveal><span class="metric__n">05</span><h3>Metabolismo basale</h3><p>Le calorie che il tuo corpo consuma a riposo.</p></div>
+        <div class="metric" data-reveal><span class="metric__n">06</span><h3>Postura 3D</h3><p>Allineamento di spalle, bacino e ginocchia.</p></div>
+        <div class="metric" data-reveal><span class="metric__n">07</span><h3>Circonferenze</h3><p>Vita, fianchi, cosce e braccia, senza metro.</p></div>
+        <div class="metric" data-reveal><span class="metric__n">08</span><h3>Età metabolica</h3><p>Quanto "anni" ha davvero il tuo corpo.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COME FUNZIONA -->
+  <section class="section vb-steps on-dark" id="come-funziona">
+    <div class="wrap">
+      <span class="eyebrow">Come funziona</span>
+      <h2 class="display vb-h2" data-reveal>Quattro passi,<br><span class="grad-text">una scheda.</span></h2>
+      <div class="steps" id="steps">
+        <div class="steps__line"><span id="stepsLine"></span></div>
+        <div class="step"><span class="step__dot">1</span><h3>Prenoti</h3><p>Scegli il trainer, il giorno e l'orario che preferisci, qui sotto.</p></div>
+        <div class="step"><span class="step__dot">2</span><h3>Scansione</h3><p>Sali sulla pedana del Visbody: la scansione 3D dura pochi minuti.</p></div>
+        <div class="step"><span class="step__dot">3</span><h3>Analisi</h3><p>Il trainer ti spiega i risultati e insieme fissate i tuoi obiettivi.</p></div>
+        <div class="step"><span class="step__dot">4</span><h3>La tua scheda</h3><p>Ricevi un programma costruito sui tuoi dati, da rimisurare nel tempo.</p></div>
+      </div>
+      <div class="prep" data-reveal>
+        <img src="/img/visbody-bilancia.jpg" alt="Una persona sale sulla pedana di analisi corporea seguita da un professionista" loading="lazy">
+        <div>
+          <h3>Come prepararti</h3>
+          <ul>
+            <li>Non mangiare nelle 2–3 ore precedenti</li>
+            <li>Evita allenamenti intensi prima della visita</li>
+            <li>Indossa abiti leggeri e togli scarpe, calze e oggetti metallici</li>
+            <li>Bevi normalmente il giorno prima, senza eccessi</li>
+            <li>Sconsigliato in gravidanza o se porti un pacemaker o dispositivi elettronici impiantati</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRENOTAZIONE -->
+  <section class="section booking" id="prenota">
+    <div class="wrap">
+      <div class="booking__head">
+        <div>
+          <span class="eyebrow">Prenotazione</span>
+          <h2 class="display vb-h2" data-reveal>Prenota il tuo<br><span class="grad-text">Visbody.</span></h2>
+        </div>
+        <ol class="stepper" id="stepper" aria-label="Passaggi della prenotazione">
+          <li class="is-active"><span>1</span>Trainer</li>
+          <li><span>2</span>Data e ora</li>
+          <li><span>3</span>I tuoi dati</li>
+        </ol>
+      </div>
+
+      <div class="wizard" id="wizard">
+        <!-- STEP 1: trainer -->
+        <div class="wstep is-active" data-step="1">
+          <p class="wstep__title">Con chi vuoi fare la visita?</p>
+          <div class="trainers" id="trainers" role="radiogroup" aria-label="Scegli il trainer"></div>
+        </div>
+
+        <!-- STEP 2: data e ora -->
+        <div class="wstep" data-step="2" hidden>
+          <div class="wstep__bar">
+            <button class="back" type="button" data-back>← Cambia trainer</button>
+            <div class="picked" id="pickedTrainer"></div>
+          </div>
+          <p class="wstep__title" id="monthLabel">Scegli il giorno</p>
+          <div class="cal" id="cal" role="radiogroup" aria-label="Scegli il giorno"></div>
+          <p class="wstep__title" id="slotLabel" style="margin-top:34px">Orari disponibili</p>
+          <div class="times" id="times" role="radiogroup" aria-label="Scegli l'orario"></div>
+        </div>
+
+        <!-- STEP 3: dati -->
+        <div class="wstep" data-step="3" hidden>
+          <div class="wstep__bar">
+            <button class="back" type="button" data-back>← Cambia orario</button>
+          </div>
+          <div class="checkout">
+            <form class="form form--flat" id="bookForm" novalidate>
+              <div class="fields">
+                <div class="field"><label for="b-nome">Nome</label><input id="b-nome" name="nome" autocomplete="given-name" required></div>
+                <div class="field"><label for="b-cognome">Cognome</label><input id="b-cognome" name="cognome" autocomplete="family-name" required></div>
+                <div class="field"><label for="b-email">Email</label><input id="b-email" name="email" type="email" autocomplete="email" required></div>
+                <div class="field"><label for="b-tel">Telefono</label><input id="b-tel" name="telefono" type="tel" autocomplete="tel" required></div>
+                <div class="field field--full">
+                  <label>Sei già iscritto al Zeta Club?</label>
+                  <div class="seg" role="radiogroup">
+                    <label><input type="radio" name="iscritto" value="si"><span>Sì, sono iscritto</span></label>
+                    <label><input type="radio" name="iscritto" value="no" checked><span>Non ancora</span></label>
+                  </div>
+                </div>
+                <div class="field field--full">
+                  <label>Il tuo obiettivo principale</label>
+                  <div class="goals">
+                    <label><input type="radio" name="obiettivo" value="dimagrimento"><span>Dimagrire</span></label>
+                    <label><input type="radio" name="obiettivo" value="massa"><span>Aumentare la massa</span></label>
+                    <label><input type="radio" name="obiettivo" value="tonificazione"><span>Tonificare</span></label>
+                    <label><input type="radio" name="obiettivo" value="performance"><span>Performance</span></label>
+                    <label><input type="radio" name="obiettivo" value="benessere"><span>Stare bene</span></label>
+                  </div>
+                </div>
+                <div class="field field--full"><label for="b-note">Note per il trainer <span style="text-transform:none;letter-spacing:0;font-weight:500">(facoltativo)</span></label><textarea id="b-note" name="note" maxlength="1000" placeholder="Infortuni, patologie, domande…"></textarea></div>
+                <label class="check"><input type="checkbox" name="privacy" required> <span>Acconsento al trattamento dei miei dati personali per la gestione della prenotazione, ai sensi del Regolamento UE 2016/679 (GDPR).</span></label>
+              </div>
+              <div class="form__foot">
+                <button class="btn" type="submit" id="bookSubmit">Conferma prenotazione <span class="arrow">→</span></button>
+                <span class="form__msg" id="bookMsg" role="status" aria-live="polite"></span>
+              </div>
+            </form>
+            <aside class="summary" id="summary" aria-label="Riepilogo"></aside>
+          </div>
+        </div>
+
+        <!-- FATTO -->
+        <div class="wstep" data-step="4" hidden>
+          <div class="done" id="done"></div>
+        </div>
+      </div>
+
+      <details class="cancel">
+        <summary>Hai già prenotato e vuoi annullare?</summary>
+        <form id="cancelForm" class="cancel__form" novalidate>
+          <div class="field"><label for="c-code">Codice prenotazione</label><input id="c-code" name="codice" placeholder="VB-XXXXXX" required></div>
+          <div class="field"><label for="c-email">Email usata</label><input id="c-email" name="email" type="email" required></div>
+          <button class="btn btn--ghost" type="submit">Annulla visita</button>
+          <span class="form__msg" id="cancelMsg" role="status" aria-live="polite"></span>
+        </form>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <a href="/" class="logo"><svg viewBox="0 0 48 64" aria-hidden="true"><use href="#zmark"/></svg><span class="logo__text"><span class="logo__name">ZETA<b>CLUB</b></span><span class="logo__tag">gym culture</span></span></a>
+        <p style="max-width:300px;margin-top:20px">Più di una palestra. Un luogo dove il benessere diventa cultura.</p>
+      </div>
+      <div><h4>Esplora</h4><ul><li><a href="/#club">Il club</a></li><li><a href="/corsi">Corsi</a></li><li><a href="/visbody">Visbody</a></li><li><a href="/#sedi">Sedi</a></li><li><a href="/#lavora">Lavora con noi</a></li></ul></div>
+      <div><h4>Orari</h4><ul><li>Lun – Ven · 06:00 – 24:00</li><li>Sabato · 09:00 – 19:00</li><li>Domenica · 09:00 – 14:00</li></ul></div>
+      <div><h4>Contatti</h4><ul><li>Via E. Gianturco, 27<br>80046 San Giorgio a Cremano (NA)</li><li><a href="tel:+393393589451">339 358 9451</a></li><li><a href="https://www.instagram.com/zetaclubgym/" target="_blank" rel="noopener">Instagram ↗</a></li></ul></div>
+    </div>
+    <div class="footer__big" aria-hidden="true">Gym culture</div>
+    <div class="footer__bottom"><span>© <span data-year></span> Zeta Club SSD a RL</span><span>Privacy · Cookie</span></div>
+  </div>
+</footer>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="zg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14b3ac"/><stop offset="1" stop-color="#3fc26b"/></linearGradient>
+    <linearGradient id="zg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3fc26b"/><stop offset="1" stop-color="#d6e33b"/></linearGradient>
+  </defs>
+  <symbol id="zmark" viewBox="0 0 48 64">
+    <path d="M24 0 L46 28 L30 28 L24 20 L10 28 L2 28 Z" fill="url(#zg1)"/>
+    <path d="M18 24 L24 20 L30 28 Z" fill="#0f5f5b" opacity=".55"/>
+    <path d="M2 36 L18 36 L24 44 L38 36 L46 36 L24 64 Z" fill="url(#zg2)"/>
+    <path d="M18 36 L24 44 L30 40 Z" fill="#6b8f1f" opacity=".45"/>
+  </symbol>
+</svg>
+
+<script src="/vendor/gsap/gsap.min.js"></script>
+<script src="/vendor/gsap/ScrollTrigger.min.js"></script>
+<script src="/vendor/lenis/lenis.min.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/visbody.js"></script>
+</body>
+</html>

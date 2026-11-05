@@ -1,0 +1,44 @@
+{
+  "nota": "ORARI DI ESEMPIO — da sostituire con il planner reale del club",
+  "settimana": {
+    "1": [
+      { "ora": "09:30", "corso": "pilates", "durata": 55, "sala": "Sala corsi" },
+      { "ora": "13:15", "corso": "circuit", "durata": 45, "sala": "Sala functional" },
+      { "ora": "18:30", "corso": "step", "durata": 50, "sala": "Sala corsi" },
+      { "ora": "19:30", "corso": "kombat", "durata": 50, "sala": "Sala corsi" },
+      { "ora": "20:30", "corso": "functional", "durata": 50, "sala": "Sala functional" }
+    ],
+    "2": [
+      { "ora": "09:30", "corso": "aerobica", "durata": 50, "sala": "Sala corsi" },
+      { "ora": "13:15", "corso": "functional", "durata": 50, "sala": "Sala functional" },
+      { "ora": "18:30", "corso": "yoga", "durata": 60, "sala": "Sala corsi" },
+      { "ora": "19:45", "corso": "circuit", "durata": 45, "sala": "Sala functional" }
+    ],
+    "3": [
+      { "ora": "09:30", "corso": "pilates", "durata": 55, "sala": "Sala corsi" },
+      { "ora": "13:15", "corso": "circuit", "durata": 45, "sala": "Sala functional" },
+      { "ora": "18:30", "corso": "step", "durata": 50, "sala": "Sala corsi" },
+      { "ora": "19:30", "corso": "kombat", "durata": 50, "sala": "Sala corsi" },
+      { "ora": "20:30", "corso": "functional", "durata": 50, "sala": "Sala functional" }
+    ],
+    "4": [
+      { "ora": "09:30", "corso": "aerobica", "durata": 50, "sala": "Sala corsi" },
+      { "ora": "13:15", "corso": "functional", "durata": 50, "sala": "Sala functional" },
+      { "ora": "18:30", "corso": "pilates", "durata": 55, "sala": "Sala corsi" },
+      { "ora": "19:45", "corso": "kombat", "durata": 50, "sala": "Sala corsi" }
+    ],
+    "5": [
+      { "ora": "09:30", "corso": "yoga", "durata": 60, "sala": "Sala corsi" },
+      { "ora": "13:15", "corso": "circuit", "durata": 45, "sala": "Sala functional" },
+      { "ora": "18:30", "corso": "step", "durata": 50, "sala": "Sala corsi" },
+      { "ora": "19:30", "corso": "functional", "durata": 50, "sala": "Sala functional" }
+    ],
+    "6": [
+      { "ora": "10:00", "corso": "functional", "durata": 50, "sala": "Sala functional" },
+      { "ora": "11:00", "corso": "pilates", "durata": 55, "sala": "Sala corsi" }
+    ],
+    "0": [
+      { "ora": "10:00", "corso": "yoga", "durata": 60, "sala": "Sala corsi" }
+    ]
+  }
+}

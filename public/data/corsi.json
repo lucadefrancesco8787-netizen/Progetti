@@ -1,0 +1,110 @@
+{
+  "categorie": [
+    { "id": "forza", "nome": "Forza" },
+    { "id": "cardio", "nome": "Cardio" },
+    { "id": "combat", "nome": "Combat" },
+    { "id": "mind-body", "nome": "Mind & Body" },
+    { "id": "su-misura", "nome": "Su misura" }
+  ],
+  "corsi": [
+    {
+      "id": "sala-pesi",
+      "nome": "Sala Pesi",
+      "categoria": "forza",
+      "img": "/img/pesi.jpg",
+      "intensita": 3,
+      "durata": "Accesso libero",
+      "breve": "Macchine di ultima generazione e free weights, dalle 6 del mattino a mezzanotte.",
+      "descrizione": "Il cuore del club: una sala attrezzi di ultima generazione con isotoniche, rack, bilancieri e manubri. Allenati quando vuoi, con lo staff in sala pronto a correggerti e a impostare la tua scheda.",
+      "benefici": ["Aumento della massa muscolare", "Più forza e stabilità", "Scheda personalizzata"]
+    },
+    {
+      "id": "functional",
+      "nome": "Functional Training",
+      "categoria": "forza",
+      "img": "/img/functional.jpg",
+      "intensita": 4,
+      "durata": "50 min",
+      "breve": "Movimenti naturali, carichi liberi e corpo libero per un fisico che funziona davvero.",
+      "descrizione": "Squat, spinte, trazioni, salti e trasporti: allenamento a stazioni che migliora forza, coordinazione e resistenza nei movimenti di tutti i giorni.",
+      "benefici": ["Coordinazione e mobilità", "Dimagrimento", "Prevenzione infortuni"]
+    },
+    {
+      "id": "circuit",
+      "nome": "Circuit Training",
+      "categoria": "cardio",
+      "img": "/img/allenamento-coppia.jpg",
+      "intensita": 4,
+      "durata": "45 min",
+      "breve": "Stazioni a tempo, recuperi brevi e tanta energia. Il modo più rapido per rimettersi in forma.",
+      "descrizione": "Un circuito di esercizi a tempo che alterna lavoro cardio e tonificazione. Ritmo alto, musica alta, risultati veloci.",
+      "benefici": ["Consumo calorico elevato", "Resistenza cardiovascolare", "Tonificazione total body"]
+    },
+    {
+      "id": "kombat",
+      "nome": "Kombat",
+      "categoria": "combat",
+      "img": "/img/kombat.jpg",
+      "intensita": 5,
+      "durata": "50 min",
+      "breve": "Pugni, calci e combinazioni a tempo di musica. Si scarica tutto, si brucia tutto.",
+      "descrizione": "Lezione ispirata alle arti marziali e agli sport da combattimento, senza contatto. Combinazioni di colpi su base musicale per allenare cuore, gambe e testa.",
+      "benefici": ["Scarica lo stress", "Agilità e riflessi", "Altissimo consumo calorico"]
+    },
+    {
+      "id": "step",
+      "nome": "Step",
+      "categoria": "cardio",
+      "img": "/img/gruppo.jpg",
+      "intensita": 3,
+      "durata": "50 min",
+      "breve": "Coreografie sullo step per allenare gambe, glutei e fiato divertendosi.",
+      "descrizione": "Un grande classico dei corsi di gruppo: sequenze coreografiche sulla pedana, dal livello base all'avanzato, guidate da istruttori certificati.",
+      "benefici": ["Gambe e glutei", "Coordinazione", "Energia di gruppo"]
+    },
+    {
+      "id": "aerobica",
+      "nome": "Aerobica",
+      "categoria": "cardio",
+      "img": "/img/aerobica.jpg",
+      "intensita": 2,
+      "durata": "50 min",
+      "breve": "Movimento continuo e musica: il corso ideale per ripartire e prendere il ritmo.",
+      "descrizione": "Lavoro aerobico a bassa e media intensità, adatto a tutti. Migliora resistenza e coordinazione, ed è perfetto per chi rientra in palestra dopo una pausa.",
+      "benefici": ["Adatto a tutti i livelli", "Salute del cuore", "Buonumore garantito"]
+    },
+    {
+      "id": "pilates",
+      "nome": "Pilates",
+      "categoria": "mind-body",
+      "img": "/img/pilates.jpg",
+      "intensita": 2,
+      "durata": "55 min",
+      "breve": "Controllo, respirazione e core. Postura migliore, schiena più forte.",
+      "descrizione": "Esercizi lenti e controllati per rinforzare i muscoli profondi, migliorare la postura e l'allungamento. Lezioni a numero ridotto per seguire ogni allievo.",
+      "benefici": ["Core e postura", "Mal di schiena ridotto", "Allungamento muscolare"]
+    },
+    {
+      "id": "yoga",
+      "nome": "Yoga",
+      "categoria": "mind-body",
+      "img": "/img/yoga.jpg",
+      "intensita": 1,
+      "durata": "60 min",
+      "breve": "Respiro, equilibrio e flessibilità. Un'ora per staccare e ritrovarti.",
+      "descrizione": "Sequenze di posizioni e respirazione per mobilità, equilibrio e concentrazione. Il contrappeso perfetto agli allenamenti più intensi.",
+      "benefici": ["Flessibilità", "Riduzione dello stress", "Equilibrio e concentrazione"]
+    },
+    {
+      "id": "personal",
+      "nome": "Personal Training",
+      "categoria": "su-misura",
+      "img": "/img/personal.jpg",
+      "intensita": 3,
+      "durata": "Su appuntamento",
+      "breve": "Un trainer solo per te, un programma costruito sui tuoi obiettivi.",
+      "descrizione": "Valutazione iniziale, programma su misura e sedute one-to-one con un personal trainer qualificato. Che tu voglia dimagrire, aumentare la massa o preparare una gara.",
+      "benefici": ["Obiettivi misurabili", "Massima sicurezza", "Motivazione costante"]
+    }
+  ]
+}

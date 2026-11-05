@@ -1,0 +1,22 @@
+{
+  "sedi": [
+    {
+      "id": "san-giorgio",
+      "nome": "San Giorgio a Cremano",
+      "stato": "aperta",
+      "indirizzo": "Via Emanuele Gianturco, 27",
+      "cap": "80046",
+      "citta": "San Giorgio a Cremano (NA)",
+      "telefono": "339 358 9451",
+      "instagram": "zetaclubgym",
+      "img": "/img/originali/news2.jpg",
+      "orari": [
+        { "giorni": "Lun – Ven", "dow": [1, 2, 3, 4, 5], "apre": "06:00", "chiude": "24:00" },
+        { "giorni": "Sabato", "dow": [6], "apre": "09:00", "chiude": "19:00" },
+        { "giorni": "Domenica", "dow": [0], "apre": "09:00", "chiude": "14:00" }
+      ],
+      "servizi": ["Sala pesi", "Corsi di gruppo", "Personal training", "Spogliatoi e docce"],
+      "mappa": "https://maps.google.com/maps?q=Via%20Emanuele%20Gianturco%2027%2C%2080046%20San%20Giorgio%20a%20Cremano&z=16&output=embed"
+    }
+  ]
+}

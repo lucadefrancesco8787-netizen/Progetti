@@ -1,0 +1,68 @@
+{
+  "_nota": "TRAINER DI ESEMPIO: nomi, foto e turni inventati, da sostituire con lo staff reale. turni: giorno della settimana (0=domenica … 6=sabato) -> fasce orarie [inizio, fine].",
+  "durataVisitaMin": 30,
+  "giorniPrenotabili": 28,
+  "preavvisoMinimoMin": 60,
+  "trainer": [
+    {
+      "id": "marco",
+      "nome": "Marco",
+      "cognome": "Esposito",
+      "ruolo": "Head Coach",
+      "foto": "/img/trainer/t1.jpg",
+      "specialita": ["Ricomposizione corporea", "Forza"],
+      "bio": "Laureato in Scienze Motorie, da oltre 10 anni aiuta le persone a trasformare i numeri in risultati.",
+      "turni": { "1": [["07:00", "13:00"]], "3": [["07:00", "13:00"]], "5": [["07:00", "13:00"]], "6": [["09:00", "13:00"]] }
+    },
+    {
+      "id": "giulia",
+      "nome": "Giulia",
+      "cognome": "Russo",
+      "ruolo": "Preparatrice atletica",
+      "foto": "/img/trainer/t2.jpg",
+      "specialita": ["Performance", "Powerlifting"],
+      "bio": "Ex atleta agonista, segue chi vuole alzare l'asticella: più forza, più potenza, zero improvvisazione.",
+      "turni": { "1": [["15:00", "21:00"]], "2": [["15:00", "21:00"]], "4": [["15:00", "21:00"]] }
+    },
+    {
+      "id": "sara",
+      "nome": "Sara",
+      "cognome": "De Luca",
+      "ruolo": "Personal Trainer",
+      "foto": "/img/trainer/t3.jpg",
+      "specialita": ["Dimagrimento", "Educazione alimentare"],
+      "bio": "Specializzata in dimagrimento e abitudini sane. Ti aiuta a leggere il tuo Visbody e a non mollare.",
+      "turni": { "2": [["08:00", "14:00"]], "3": [["14:00", "20:00"]], "5": [["14:00", "20:00"]], "6": [["09:00", "14:00"]] }
+    },
+    {
+      "id": "luca",
+      "nome": "Luca",
+      "cognome": "Romano",
+      "ruolo": "Personal Trainer",
+      "foto": "/img/trainer/t4.jpg",
+      "specialita": ["Ipertrofia", "Bodybuilding"],
+      "bio": "Massa muscolare e definizione sono il suo pane: programmi precisi costruiti sui tuoi dati reali.",
+      "turni": { "1": [["16:00", "22:00"]], "3": [["16:00", "22:00"]], "4": [["10:00", "14:00"]], "5": [["16:00", "22:00"]] }
+    },
+    {
+      "id": "antonio",
+      "nome": "Antonio",
+      "cognome": "Ferrara",
+      "ruolo": "Functional Coach",
+      "foto": "/img/trainer/t5.jpg",
+      "specialita": ["Functional", "Postura"],
+      "bio": "Lavora su mobilità, postura e movimento. Perfetto se riparti da zero o dopo un infortunio.",
+      "turni": { "2": [["17:00", "22:00"]], "4": [["17:00", "22:00"]], "0": [["09:00", "13:00"]] }
+    },
+    {
+      "id": "davide",
+      "nome": "Davide",
+      "cognome": "Colombo",
+      "ruolo": "Personal Trainer",
+      "foto": "/img/trainer/t6.jpg",
+      "specialita": ["Over 50", "Benessere"],
+      "bio": "Allenamento sicuro e sostenibile per ogni età. Pazienza, ascolto e tanta esperienza.",
+      "turni": { "1": [["09:00", "12:00"]], "2": [["09:00", "12:00"]], "3": [["09:00", "12:00"]], "4": [["09:00", "12:00"]], "5": [["09:00", "12:00"]] }
+    }
+  ]
+}
