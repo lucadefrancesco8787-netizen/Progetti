@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Corsi — Zeta Club | Functional, Kombat, Pilates, Step e altro</title>
+  <meta name="description" content="Tutti i corsi del Zeta Club: sala pesi, functional training, circuit, kombat, step, aerobica, pilates, yoga e personal training.">
+  <meta name="theme-color" content="#0b0c0c">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="header" id="header">
+  <div class="wrap header__inner">
+    <a href="/" class="logo" aria-label="Zeta Club, torna alla home">
+      <svg viewBox="0 0 48 64" aria-hidden="true"><use href="#zmark"/></svg>
+      <span class="logo__text"><span class="logo__name">ZETA<b>CLUB</b></span><span class="logo__tag">gym culture</span></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="/#club">Il Club</a>
+      <a href="/corsi" aria-current="page">Corsi</a>
+      <a href="/#sedi">Sedi</a>
+      <a href="/#lavora">Lavora con noi</a>
+      <a href="#planner" class="btn btn--light">Orari corsi <span class="arrow">→</span></a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Apri il menu" aria-expanded="false"><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero on-dark">
+    <div class="wrap">
+      <span class="eyebrow" data-fade>Corsi di gruppo · Sala · Personal</span>
+      <h1 class="display" aria-label="I corsi">
+        <span class="line" style="display:block;overflow:hidden"><span style="display:inline-block" data-split>I nostri</span></span>
+        <span class="line" style="display:block;overflow:hidden"><span style="display:inline-block" class="grad-text" data-split>corsi.</span></span>
+      </h1>
+      <div class="page-hero__row">
+        <p data-fade>Dalla forza alla mobilità, dal combattimento alla respirazione. Istruttori qualificati, lezioni per tutti i livelli e un planner che si adatta alle tue giornate.</p>
+        <a href="#griglia" class="btn btn--light" data-fade>Esplora <span class="arrow">↓</span></a>
+      </div>
+      <div class="page-hero__strip" aria-hidden="true">
+        <img src="/img/functional.jpg" alt="" data-strip>
+        <img src="/img/kombat-2.jpg" alt="" data-strip>
+        <img src="/img/pilates.jpg" alt="" data-strip>
+        <img src="/img/circuit.jpg" alt="" data-strip>
+        <img src="/img/stretching.jpg" alt="" data-strip>
+      </div>
+    </div>
+  </section>
+
+  <div class="filters" id="griglia">
+    <div class="wrap filters__inner" id="filters" role="group" aria-label="Filtra per categoria"></div>
+  </div>
+
+  <section class="wrap">
+    <div class="cgrid" id="cgrid"></div>
+  </section>
+
+  <section class="section planner on-dark" id="planner">
+    <div class="wrap">
+      <div class="planner__head">
+        <div>
+          <span class="eyebrow">Planner settimanale</span>
+          <h2 class="display" style="margin-top:16px" data-reveal>Quando<br><span class="grad-text">allenarti.</span></h2>
+        </div>
+        <p class="planner__note">Gli orari mostrati sono indicativi. Per il planner aggiornato e le prenotazioni chiedi in reception o chiamaci al 339 358 9451.</p>
+      </div>
+      <div class="days" id="days" role="group" aria-label="Giorno della settimana"></div>
+      <div class="slots" id="slots" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="section final">
+    <div class="wrap">
+      <h2 class="display" data-reveal>Prova una<br>lezione.</h2>
+      <p data-reveal>Non sai da dove cominciare? Passa in reception: ti consigliamo il corso giusto per il tuo livello e i tuoi obiettivi.</p>
+      <a href="tel:+393393589451" class="btn" data-reveal>Chiama 339 358 9451 <span class="arrow">→</span></a>
+    </div>
+  </section>
+</main>
+
+<!-- Dettaglio corso -->
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer__bg" data-close></div>
+  <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" data-lenis-prevent>
+    <button class="drawer__close" data-close aria-label="Chiudi">×</button>
+    <div class="drawer__img"><img id="drawerImg" alt=""></div>
+    <div class="drawer__body">
+      <span class="eyebrow" id="drawerCat"></span>
+      <h2 class="display" id="drawerTitle"></h2>
+      <p id="drawerDesc"></p>
+      <div class="drawer__facts">
+        <div><small>Durata</small><strong id="drawerDur"></strong></div>
+        <div><small>Intensità</small><strong id="drawerInt"></strong></div>
+      </div>
+      <ul id="drawerBen"></ul>
+      <a href="#planner" class="btn" data-close data-goto-planner>Vedi gli orari <span class="arrow">→</span></a>
+    </div>
+  </aside>
+</div>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <a href="/" class="logo"><svg viewBox="0 0 48 64" aria-hidden="true"><use href="#zmark"/></svg><span class="logo__text"><span class="logo__name">ZETA<b>CLUB</b></span><span class="logo__tag">gym culture</span></span></a>
+        <p style="max-width:300px;margin-top:20px">Più di una palestra. Un luogo dove il benessere diventa cultura.</p>
+      </div>
+      <div><h4>Esplora</h4><ul><li><a href="/#club">Il club</a></li><li><a href="/corsi">Corsi</a></li><li><a href="/#sedi">Sedi</a></li><li><a href="/#lavora">Lavora con noi</a></li></ul></div>
+      <div><h4>Orari</h4><ul><li>Lun – Ven · 06:00 – 24:00</li><li>Sabato · 09:00 – 19:00</li><li>Domenica · 09:00 – 14:00</li></ul></div>
+      <div><h4>Contatti</h4><ul><li>Via E. Gianturco, 27<br>80046 San Giorgio a Cremano (NA)</li><li><a href="tel:+393393589451">339 358 9451</a></li><li><a href="https://www.instagram.com/zetaclubgym/" target="_blank" rel="noopener">Instagram ↗</a></li></ul></div>
+    </div>
+    <div class="footer__big" aria-hidden="true">Gym culture</div>
+    <div class="footer__bottom"><span>© <span data-year></span> Zeta Club SSD a RL</span><span>Privacy · Cookie</span></div>
+  </div>
+</footer>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="zg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14b3ac"/><stop offset="1" stop-color="#3fc26b"/></linearGradient>
+    <linearGradient id="zg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3fc26b"/><stop offset="1" stop-color="#d6e33b"/></linearGradient>
+  </defs>
+  <symbol id="zmark" viewBox="0 0 48 64">
+    <path d="M24 0 L46 28 L30 28 L24 20 L10 28 L2 28 Z" fill="url(#zg1)"/>
+    <path d="M18 24 L24 20 L30 28 Z" fill="#0f5f5b" opacity=".55"/>
+    <path d="M2 36 L18 36 L24 44 L38 36 L46 36 L24 64 Z" fill="url(#zg2)"/>
+    <path d="M18 36 L24 44 L30 40 Z" fill="#6b8f1f" opacity=".45"/>
+  </symbol>
+</svg>
+
+<script src="/vendor/gsap/gsap.min.js"></script>
+<script src="/vendor/gsap/ScrollTrigger.min.js"></script>
+<script src="/vendor/lenis/lenis.min.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/corsi.js"></script>
+</body>
+</html>
