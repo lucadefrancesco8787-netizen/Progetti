@@ -4,31 +4,14 @@ import crypto from 'node:crypto';
 import express from 'express';
 import { ROOT, config } from './config.js';
 import { db } from './db.js';
+import { toMin, toHHMM, oraItaliana, isData, giornoSettimana, aggiungiGiorni } from './tempo.js';
 
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'server', 'data', 'trainer.json'), 'utf8'));
 const trainerById = new Map(cfg.trainer.map((t) => [t.id, t]));
 const DURATA = cfg.durataVisitaMin;
 const OBIETTIVI = new Set(['dimagrimento', 'massa', 'tonificazione', 'performance', 'benessere']);
-const TZ = 'Europe/Rome';
-
-/* ---------- Utility data/ora (sempre in ora italiana, anche se il server è altrove) ---------- */
-const toMin = (hhmm) => { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; };
-const toHHMM = (min) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
-
-function oraItaliana() {
-  const p = Object.fromEntries(
-    new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
-      .formatToParts(new Date()).map((x) => [x.type, x.value])
-  );
-  return { data: `${p.year}-${p.month}-${p.day}`, minuti: Number(p.hour) * 60 + Number(p.minute) };
-}
-const isData = (s) => /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(`${s}T00:00:00Z`));
-const giornoSettimana = (s) => new Date(`${s}T00:00:00Z`).getUTCDay();
-function aggiungiGiorni(s, n) {
-  const d = new Date(`${s}T00:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + n);
-  return d.toISOString().slice(0, 10);
-}
+export const trainerVisbody = trainerById;
+export const durataVisbody = DURATA;
 
 /* Tutti gli slot teorici di un trainer in una data */
 function slotTeorici(trainer, data) {

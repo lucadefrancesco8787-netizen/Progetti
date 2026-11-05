@@ -6,12 +6,22 @@ import multer from 'multer';
 import { config, ROOT } from './config.js';
 import { db, migrate } from './db.js';
 import { visbody } from './visbody.js';
+import { auth, utenteDaRichiesta } from './auth.js';
+import { area } from './area.js';
+import { seedDemo } from './seed.js';
 
 migrate();
+if (config.seedDemo && seedDemo()) console.log('Account e dati dimostrativi creati (npm run seed per vederli).');
 fs.mkdirSync(config.uploadDir, { recursive: true });
 
 const app = express();
 app.disable('x-powered-by');
+app.set('trust proxy', 'loopback'); // dietro Nginx/Caddy sul server, req.ip resta quello vero
+
+// Area riservata: senza login si va alla pagina di accesso, e viceversa
+app.get(['/area', '/area.html'], (req, res, next) => (utenteDaRichiesta(req) ? next() : res.redirect('/accedi')));
+app.get(['/accedi', '/accedi.html'], (req, res, next) => (utenteDaRichiesta(req) ? res.redirect('/area') : next()));
+app.use(['/area', '/accedi'], (_req, res, next) => { res.setHeader('Cache-Control', 'no-store'); next(); });
 
 // File statici del sito + librerie front-end da node_modules
 app.use(express.static(path.join(ROOT, 'public'), { extensions: ['html'] }));
@@ -81,6 +91,8 @@ app.get('/api/candidature', (req, res) => {
 });
 
 app.use('/api/visbody', visbody);
+app.use('/api/auth', auth);
+app.use('/api/area', area);
 
 app.use('/api', (_req, res) => res.status(404).json({ ok: false, errore: 'Risorsa non trovata.' }));
 app.use((err, _req, res, _next) => {

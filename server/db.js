@@ -6,6 +6,7 @@ import { config, ROOT } from './config.js';
 fs.mkdirSync(path.dirname(config.databasePath), { recursive: true });
 
 export const db = new DatabaseSync(config.databasePath);
+db.exec('PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;');
 
 // Applica in ordine le migrazioni non ancora eseguite (server/migrations/*.sql)
 export function migrate() {

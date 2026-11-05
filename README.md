@@ -38,6 +38,30 @@ data/              creata in automatico: database e CV caricati (non va su git)
 - Il cliente riceve un codice (es. `VB-7K2M9Q`), con cui può annullare la visita dalla pagina usando anche la sua email.
 - Agenda per lo staff: `GET /api/visbody/prenotazioni?token=<ADMIN_TOKEN>` (dalla data di oggi; `&da=YYYY-MM-DD` per cambiare data).
 
+### Area riservata (/accedi → /area)
+Un unico login per clienti e staff: il ruolo dell'utente decide cosa vede.
+
+| Ruolo | Cosa vede |
+|---|---|
+| Cliente | Appuntamenti (Visbody, visita medica, consulenze, personal) e storico |
+| Reception | Turni delle prossime 2 settimane, attività in sospeso (spuntabili) |
+| Consulente | Chiamate da fare con esito, consulenze in agenda |
+| Personal trainer | Turni in sala, sessioni di personal, Visbody prenotati con lui |
+| Istruttore | Lezioni assegnate, con i colleghi in co-conduzione e lo staff di ogni corso |
+
+- Password salvate con **scrypt**, sessione in cookie `HttpOnly` + `SameSite=Lax` (metti `COOKIE_SECURE=true` in HTTPS), limite ai tentativi di accesso.
+- Con `SEED_DEMO=true` al primo avvio vengono creati 5 account di prova e dati di esempio con date relative a oggi.
+  `npm run seed` li elenca, `npm run seed:reset` li ricrea (cancella solo i dati marcati demo).
+- **In produzione**: `SEED_DEMO=false`, poi crea gli utenti reali (serve ancora una pagina di amministrazione).
+
+| Ruolo | Email | Password |
+|---|---|---|
+| Cliente | cliente@demo.it | Cliente2026! |
+| Reception | reception@demo.it | Reception2026! |
+| Consulente | consulente@demo.it | Consulente2026! |
+| Personal trainer | trainer@demo.it | Trainer2026! |
+| Istruttore | istruttore@demo.it | Istruttore2026! |
+
 ### Candidature
 I CV vengono salvati in `UPLOAD_DIR`, e i dati del candidato nel database SQLite (tabella `candidature`).
 Per vedere l'elenco: `GET /api/candidature?token=<ADMIN_TOKEN>`.

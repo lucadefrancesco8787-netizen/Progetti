@@ -6,6 +6,15 @@
 
   document.querySelectorAll('[data-year]').forEach((el) => (el.textContent = new Date().getFullYear()));
 
+  // Se l'utente ha già fatto l'accesso, "Accedi" diventa "La mia area"
+  fetch('/api/auth/me', { credentials: 'same-origin' })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((j) => {
+      if (!j?.utente) return;
+      document.querySelectorAll('[data-login-link]').forEach((a) => { a.href = '/area'; a.textContent = `Ciao ${j.utente.nome}`; });
+    })
+    .catch(() => {});
+
   // --- Smooth scroll (Lenis) collegato a GSAP ---
   if (hasGsap) gsap.registerPlugin(ScrollTrigger);
   if (!reduce && typeof window.Lenis !== 'undefined') {

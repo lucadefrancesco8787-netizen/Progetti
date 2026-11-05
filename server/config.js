@@ -16,4 +16,9 @@ export const config = {
   uploadDir: fromRoot(process.env.UPLOAD_DIR || './data/uploads'),
   maxUploadMb: Number(process.env.MAX_UPLOAD_MB) || 5,
   adminToken: process.env.ADMIN_TOKEN || '',
+  // Crea gli account e i dati dimostrativi al primo avvio (da disattivare in produzione)
+  seedDemo: process.env.SEED_DEMO === 'true',
+  // In produzione (HTTPS) il cookie di sessione va marcato Secure
+  cookieSecure: process.env.COOKIE_SECURE === 'true',
+  sessionDays: Number(process.env.SESSION_DAYS) || 7,
 };
