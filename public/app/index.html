@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Zeta Club</title>
+  <meta name="description" content="L'app dei clienti Zeta Club: appuntamenti, scheda di allenamento e risultati delle visite.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0b0c0c">
+
+  <!-- iPhone: si apre a schermo intero quando è aggiunta alla schermata Home -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Zeta Club">
+  <link rel="apple-touch-icon" href="/app/icons/icon-180.png">
+  <link rel="manifest" href="/app/manifest.webmanifest">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app/app.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="zg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14b3ac"/><stop offset="1" stop-color="#3fc26b"/></linearGradient>
+    <linearGradient id="zg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3fc26b"/><stop offset="1" stop-color="#d6e33b"/></linearGradient>
+
+    <linearGradient id="zA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#17b2aa"/><stop offset="1" stop-color="#20bc9d"/></linearGradient>
+    <linearGradient id="zB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#17b6a2"/><stop offset="1" stop-color="#63c47a"/></linearGradient>
+    <linearGradient id="zC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9ccf6c"/><stop offset="1" stop-color="#d0e03a"/></linearGradient>
+    <linearGradient id="zD" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bfd93e"/><stop offset="1" stop-color="#e2e22a"/></linearGradient>
+    <!-- Simbolo del logo, ricalcato da public/img/originali/logo.png -->
+    <symbol id="zmark" viewBox="45 60 345 435">
+      <path d="M180 60 L258 205 L100 205 Z" fill="url(#zA)"/>
+      <path d="M88 214 L108 266 L212 266 L130 420 L45 275 Z" fill="url(#zB)"/>
+      <path d="M310 140 L390 280 L352 346 L337 346 L323 287 L205 287 Z" fill="url(#zC)"/>
+      <path d="M190 350 L349 350 L265 495 Z" fill="url(#zD)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- Avvio -->
+<div class="splash" id="splash"><svg viewBox="45 60 345 435" aria-hidden="true"><use href="#zmark"/></svg></div>
+
+<!-- Login -->
+<main class="login" id="login" hidden>
+  <div class="login__brand">
+    <svg viewBox="45 60 345 435" aria-hidden="true"><use href="#zmark"/></svg>
+    <h1>ZETA<b>CLUB</b></h1>
+    <p>La tua palestra, in tasca.</p>
+  </div>
+  <form class="login__form" id="loginForm" novalidate>
+    <label class="field"><span>Email</span>
+      <input type="email" name="email" autocomplete="username" inputmode="email" autocapitalize="off" required>
+    </label>
+    <label class="field"><span>Password</span>
+      <input type="password" name="password" autocomplete="current-password" required>
+    </label>
+    <p class="form-error" id="loginError" role="alert"></p>
+    <button class="btn btn--primary" type="submit">Accedi</button>
+    <p class="login__hint">Usa le stesse credenziali dell'area riservata del sito.</p>
+  </form>
+</main>
+
+<!-- App -->
+<div class="shell" id="shell" hidden>
+  <header class="top">
+    <div class="top__title">
+      <small id="topKicker"></small>
+      <h1 id="topTitle">Oggi</h1>
+    </div>
+    <button class="avatar" id="avatarBtn" type="button" aria-label="Profilo"></button>
+  </header>
+
+  <main class="view" id="view" tabindex="-1"></main>
+
+  <nav class="tabs" aria-label="Sezioni">
+    <a href="#oggi" data-tab="oggi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Oggi</span></a>
+    <a href="#appuntamenti" data-tab="appuntamenti"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Agenda</span></a>
+    <a href="#scheda" data-tab="scheda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12h2M19.5 12h2M6.5 12h11"/><rect x="4.5" y="8" width="3" height="8" rx="1"/><rect x="16.5" y="8" width="3" height="8" rx="1"/></svg><span>Scheda</span></a>
+    <a href="#visita" data-tab="visita"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg><span>Visita</span></a>
+  </nav>
+</div>
+
+<!-- Foglio dal basso (andamento esercizio, profilo) -->
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet__backdrop" data-close></div>
+  <section class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet__grip" aria-hidden="true"></div>
+    <header class="sheet__head">
+      <h2 id="sheetTitle"></h2>
+      <button class="icon-btn" type="button" data-close aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </header>
+    <div class="sheet__body" id="sheetBody"></div>
+  </section>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/app/app.js" type="module"></script>
+</body>
+</html>

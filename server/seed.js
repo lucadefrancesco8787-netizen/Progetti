@@ -19,6 +19,11 @@ export const ACCOUNT_DEMO = [
   { ruolo: 'trainer', email: 'trainer@demo.it', password: 'Trainer2026!', nome: 'Marco', cognome: 'Esposito', telefono: '333 444 5566', trainer_id: 'marco' },
   { ruolo: 'istruttore', email: 'istruttore@demo.it', password: 'Istruttore2026!', nome: 'Chiara', cognome: 'Greco', telefono: '333 555 6677' },
 ];
+// Secondi colleghi con password nota: servono per provare i cambi turno dall'altra parte
+export const ACCOUNT_DEMO_COLLEGHI = [
+  { ruolo: 'receptionist', email: 'reception2@demo.it', password: 'Reception2026!', nome: 'Sara', cognome: 'Coppola', telefono: '333 666 7788' },
+  { ruolo: 'trainer', email: 'trainer2@demo.it', password: 'Trainer2026!', nome: 'Luca', cognome: 'Romano', telefono: '333 777 8899', trainer_id: 'luca' },
+];
 // Colleghi senza password nota: servono per mostrare le lezioni condivise
 const COLLEGHI = [
   { ruolo: 'istruttore', email: 'elena.ricci@demo.it', nome: 'Elena', cognome: 'Ricci' },
@@ -26,7 +31,7 @@ const COLLEGHI = [
   { ruolo: 'istruttore', email: 'giorgio.sannino@demo.it', nome: 'Giorgio', cognome: 'Sannino' },
 ];
 
-const TABELLE_DEMO = ['lezioni', 'chiamate', 'attivita', 'turni', 'appuntamenti', 'prenotazioni_visbody', 'utenti'];
+const TABELLE_DEMO = ['cambi_turno', 'impegni', 'registro_pesi', 'visite', 'schede', 'lezioni', 'chiamate', 'attivita', 'turni', 'appuntamenti', 'prenotazioni_visbody', 'utenti'];
 
 export function resetDemo() {
   db.exec('BEGIN');
@@ -36,7 +41,7 @@ export function resetDemo() {
 
 export function seedDemo({ reset = false } = {}) {
   if (reset) resetDemo();
-  if (db.prepare('SELECT COUNT(*) AS n FROM utenti WHERE demo = 1').get().n > 0) return false;
+  if (db.prepare('SELECT COUNT(*) AS n FROM utenti WHERE demo = 1').get().n > 0) return seedApp() | seedStaff();
 
   const { data: oggi } = oraItaliana();
   const g = (n) => aggiungiGiorni(oggi, n);
@@ -148,6 +153,136 @@ export function seedDemo({ reset = false } = {}) {
     }
 
     db.exec('COMMIT');
+  } catch (err) {
+    db.exec('ROLLBACK');
+    throw err;
+  }
+  seedApp();
+  seedStaff();
+  return true;
+}
+
+/*
+ * Dati per l'app del cliente demo (Mario): scheda, pesi già segnati nelle ultime settimane, visite Visbody.
+ * Separata dal resto così si aggiunge anche a un database creato prima che l'app esistesse.
+ */
+const SCHEDA_DEMO = [
+  ['A · Petto, spalle, tricipiti', [
+    ['Panca piana con bilanciere', 4, '8', 120, 'Scapole addotte, piedi ben piantati.', [50, 52.5, 55, 55, 57.5]],
+    ['Spinte manubri su panca inclinata', 3, '10', 90, null, [18, 18, 20, 20, 20]],
+    ['Croci ai cavi', 3, '12', 60, 'Movimento controllato, niente slanci.', [10, 10, 12.5, 12.5, 12.5]],
+    ['Lento avanti manubri', 3, '10', 90, null, [14, 14, 16, 16, 16]],
+    ['Alzate laterali', 3, '12-15', 60, null, [8, 8, 8, 9, 10]],
+    ['Push down al cavo', 3, '12', 60, null, [20, 22.5, 22.5, 25, 25]],
+  ]],
+  ['B · Gambe e addome', [
+    ['Squat con bilanciere', 4, '8', 150, 'Scendi almeno al parallelo, schiena neutra.', [60, 65, 65, 70, 72.5]],
+    ['Pressa 45°', 3, '10', 120, null, [120, 130, 140, 140, 150]],
+    ['Affondi in camminata con manubri', 3, '10 per gamba', 90, null, [12, 12, 14, 14, 14]],
+    ['Leg curl sdraiato', 3, '12', 60, null, [30, 32.5, 32.5, 35, 35]],
+    ['Calf in piedi alla macchina', 4, '15', 45, null, [40, 40, 45, 45, 50]],
+    ['Plank', 3, '45 sec', 45, null, null],
+  ]],
+  ['C · Dorso e bicipiti', [
+    ['Lat machine presa larga', 4, '10', 90, null, [45, 47.5, 50, 50, 52.5]],
+    ['Rematore con bilanciere', 4, '8', 120, "Busto a 45°, tira verso l'ombelico.", [40, 42.5, 45, 45, 47.5]],
+    ['Pulley basso', 3, '12', 60, null, [40, 40, 45, 45, 45]],
+    ['Face pull', 3, '15', 60, null, [15, 15, 17.5, 17.5, 20]],
+    ['Curl con bilanciere EZ', 3, '10', 60, null, [20, 22.5, 22.5, 25, 25]],
+    ['Tapis roulant in salita', 1, '15 min', null, 'Pendenza 8–10%, passo veloce.', null],
+  ]],
+];
+
+export function seedApp() {
+  const mario = db.prepare(`SELECT id FROM utenti WHERE email = 'cliente@demo.it' AND demo = 1`).get()?.id;
+  const marco = db.prepare(`SELECT id FROM utenti WHERE email = 'trainer@demo.it' AND demo = 1`).get()?.id ?? null;
+  if (!mario || db.prepare('SELECT COUNT(*) AS n FROM schede WHERE demo = 1').get().n > 0) return false;
+
+  const { data: oggi } = oraItaliana();
+  const g = (n) => aggiungiGiorni(oggi, n);
+  db.exec('BEGIN');
+  try {
+    const schedaId = db.prepare(
+      `INSERT INTO schede (cliente_id, trainer_id, titolo, obiettivo, inizio, fine, note, demo) VALUES (?, ?, ?, ?, ?, ?, ?, 1)`
+    ).run(mario, marco, 'Ipertrofia · 3 giorni', 'Aumento massa muscolare', g(-35), g(49),
+      'Riscaldamento di 10 minuti prima di ogni allenamento. Se completi tutte le ripetizioni con buona tecnica, aumenta il peso la volta dopo.').lastInsertRowid;
+    const insGiorno = db.prepare(`INSERT INTO schede_giorni (scheda_id, ordine, nome) VALUES (?, ?, ?)`);
+    const insEs = db.prepare(`INSERT INTO schede_esercizi (giorno_id, ordine, nome, serie, ripetizioni, recupero_sec, note, con_peso) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
+    const insPeso = db.prepare(`INSERT INTO registro_pesi (esercizio_id, cliente_id, data, peso_kg, demo) VALUES (?, ?, ?, ?, 1)`);
+    SCHEDA_DEMO.forEach(([nome, esercizi], gi) => {
+      const giornoId = insGiorno.run(schedaId, gi + 1, nome).lastInsertRowid;
+      esercizi.forEach(([n, serie, rip, rec, note, storico], ei) => {
+        const esId = insEs.run(giornoId, ei + 1, n, serie, rip, rec, note, storico ? 1 : 0).lastInsertRowid;
+        // Una seduta a settimana per giorno di scheda, nelle ultime 5 settimane
+        storico?.forEach((kg, k) => insPeso.run(esId, mario, g(-7 * (5 - k) + gi * 2 - 1), kg));
+      });
+    });
+
+    const insVisita = db.prepare(
+      `INSERT INTO visite (cliente_id, trainer_id, data, peso_kg, altezza_cm, grasso_pct, massa_muscolare_kg, acqua_pct, grasso_viscerale,
+                           metabolismo_kcal, eta_metabolica, vita_cm, fianchi_cm, note, demo)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
+    );
+    insVisita.run(mario, marco, g(-63), 82.4, 178, 21.8, 35.1, 54.2, 9, 1760, 38, 92, 101, 'Prima analisi: buona base, obiettivo più massa magra e meno grasso addominale.');
+    insVisita.run(mario, marco, g(-12), 81.1, 178, 19.6, 36.4, 55.8, 8, 1795, 35, 89, 100,
+      'Ottimi progressi: +1,3 kg di muscolo e −2,2% di grasso in due mesi. Continuare con la scheda attuale, aumentare leggermente le proteine.');
+    db.exec('COMMIT');
+    return true;
+  } catch (err) {
+    db.exec('ROLLBACK');
+    throw err;
+  }
+}
+
+/*
+ * Dati per l'app dello staff: secondi colleghi (reception e trainer) con i loro turni, impegni, una richiesta di cambio turno.
+ * Idempotente: si aggiunge anche a un database creato prima.
+ */
+export function seedStaff() {
+  if (db.prepare(`SELECT COUNT(*) AS n FROM utenti WHERE email = 'reception2@demo.it'`).get().n > 0) return false;
+  const idDi = (email) => db.prepare(`SELECT id FROM utenti WHERE email = ? AND demo = 1`).get(email)?.id;
+  const anna = idDi('reception@demo.it'), marco = idDi('trainer@demo.it'), paolo = idDi('consulente@demo.it'), chiara = idDi('istruttore@demo.it');
+  if (!anna || !marco) return false;
+
+  const { data: oggi } = oraItaliana();
+  const g = (n) => aggiungiGiorni(oggi, n);
+  db.exec('BEGIN');
+  try {
+    const insUtente = db.prepare(`INSERT INTO utenti (email, password_hash, nome, cognome, telefono, ruolo, trainer_id, demo) VALUES (?, ?, ?, ?, ?, ?, ?, 1)`);
+    const [sara, luca] = ACCOUNT_DEMO_COLLEGHI.map((a) => Number(insUtente.run(a.email, hashPassword(a.password), a.nome, a.cognome, a.telefono, a.ruolo, null).lastInsertRowid));
+
+    /* Turni dei colleghi: complementari a quelli di Anna e Marco */
+    const insTurno = db.prepare(`INSERT INTO turni (utente_id, data, inizio, fine, area, note, demo) VALUES (?, ?, ?, ?, ?, ?, 1)`);
+    const turnoSara = {};
+    for (let i = 0; i < 14; i++) {
+      const d = g(i), dow = giornoSettimana(d);
+      if (dow !== 0 && dow !== 6) {
+        const mattina = Math.floor(i / 7) % 2 === 1; // opposta ad Anna
+        turnoSara[i] = Number(insTurno.run(sara, d, mattina ? '06:00' : '14:00', mattina ? '14:00' : '22:00', 'reception', mattina ? 'Apertura club' : 'Chiusura cassa').lastInsertRowid);
+      }
+      if ([2, 4, 6].includes(dow)) insTurno.run(luca, d, '08:00', '13:00', 'sala', null);
+      if ([1, 3, 5].includes(dow)) insTurno.run(luca, d, '19:00', '23:00', 'sala', 'Chiusura sala');
+    }
+
+    /* Una richiesta in attesa: Sara chiede ad Anna di coprire un suo turno */
+    const giornoSara = Object.keys(turnoSara).map(Number).find((i) => i >= 2);
+    if (giornoSara != null) {
+      db.prepare(`INSERT INTO cambi_turno (tipo, richiedente_id, turno_id, collega_id, messaggio, demo) VALUES ('copertura', ?, ?, ?, ?, 1)`)
+        .run(sara, turnoSara[giornoSara], anna, 'Ho una visita medica quel giorno, riusciresti a coprirmi? Ricambio quando vuoi!');
+    }
+
+    /* Impegni */
+    const insImp = db.prepare(`INSERT INTO impegni (utente_id, titolo, data, inizio, fine, luogo, note, demo) VALUES (?, ?, ?, ?, ?, ?, ?, 1)`);
+    insImp.run(marco, 'Riunione staff trainer', g(3), '13:30', '14:30', 'Sala riunioni', 'Nuove schede di gruppo per gennaio.');
+    insImp.run(marco, 'Corso aggiornamento kettlebell', g(8), '10:00', '13:00', 'Online', null);
+    insImp.run(anna, 'Formazione nuovo gestionale', g(2), '15:00', '16:00', 'Ufficio', 'Portare le credenziali.');
+    if (paolo) insImp.run(paolo, 'Incontro azienda convenzione', g(1), '09:30', '10:30', 'Sede Rossi Srl, Via Roma 12', 'Proposta abbonamenti aziendali.');
+    if (chiara) insImp.run(chiara, 'Prova coreografia step', g(2), '12:00', '13:00', 'Sala corsi', null);
+
+    /* Una nota su una chiamata già fatta */
+    if (paolo) db.prepare(`UPDATE chiamate SET note = ? WHERE consulente_id = ? AND esito = 'non-interessato'`).run('Si trasferisce a Salerno per lavoro. Richiamare tra 6 mesi.', paolo);
+
+    db.exec('COMMIT');
     return true;
   } catch (err) {
     db.exec('ROLLBACK');
@@ -161,5 +296,5 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const reset = process.argv.includes('--reset');
   const fatto = seedDemo({ reset });
   console.log(fatto ? 'Dati dimostrativi creati.' : 'I dati dimostrativi esistono già (usa --reset per ricrearli).');
-  for (const a of ACCOUNT_DEMO) console.log(`  ${a.ruolo.padEnd(13)} ${a.email.padEnd(22)} ${a.password}`);
+  for (const a of [...ACCOUNT_DEMO, ...ACCOUNT_DEMO_COLLEGHI]) console.log(`  ${a.ruolo.padEnd(13)} ${a.email.padEnd(22)} ${a.password}`);
 }

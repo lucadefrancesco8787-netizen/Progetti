@@ -81,3 +81,44 @@ leggere un `DATABASE_URL`. Le route in `server/index.js` usano solo query SQL st
 - Foto reali del club: profilo pubblico Zeta Club (Wellhub) e articolo di *rosarydelsudArt News*. Vanno sostituite con foto ufficiali ad alta risoluzione.
 - Altre foto: [Unsplash](https://unsplash.com/license), uso libero.
 - Il simbolo del logo in SVG è una ricostruzione provvisoria: va sostituito con il file vettoriale ufficiale.
+
+## App del cliente (`/app`)
+
+Web app installabile (PWA) per i clienti: su iPhone si apre in Safari e si aggiunge alla schermata Home
+(Condividi → "Aggiungi alla schermata Home"), poi si usa a schermo intero come un'app.
+
+- **Oggi**: prossimo appuntamento, allenamento consigliato (il giorno di scheda fatto meno di recente), ultima visita.
+- **Agenda**: tutti gli appuntamenti futuri (visite, consulenze, personal, Visbody).
+- **Scheda**: la scheda attiva divisa per giorni; per ogni esercizio si segna il peso usato oggi
+  (salvataggio automatico, uno per esercizio al giorno) e si vede l'andamento nel tempo.
+- **Visita**: risultati dell'ultima analisi Visbody, confrontati con quella precedente.
+
+File: `public/app/` (interfaccia), `server/app-cliente.js` (API `/api/app`), `server/migrations/004_app_cliente.sql`
+(tabelle `schede`, `schede_giorni`, `schede_esercizi`, `registro_pesi`, `visite`).
+Solo il ruolo `cliente` può usarla. Account di prova: `cliente@demo.it`.
+
+Schede e visite per ora si inseriscono nel database (i dati demo li crea `server/seed.js`):
+manca ancora la schermata con cui il trainer le compila.
+Se modifichi `public/app/app.js` o `app.css`, aumenta `VERSIONE` in `public/app/sw.js` così i telefoni si aggiornano.
+
+## App dello staff (`/app`, stesso indirizzo dei clienti)
+
+L'app riconosce il ruolo di chi entra e mostra sezioni diverse (file: `public/app/staff.js`, API `server/staff.js` su `/api/staff`,
+tabelle in `server/migrations/005_staff_app.sql`):
+
+| Ruolo | Sezioni |
+|---|---|
+| Trainer | **Agenda** (+ impegni), **Schede** (crea/modifica la scheda di ogni cliente, con nota per ogni esercizio), **Turni** (cambi turno) |
+| Receptionist | **Attività** (aggiungi, spunta, elimina), **Turni** (cambi turno), **Agenda** (+ impegni) |
+| Consulente | **Chiamate** (aggiungi, esito + note), **Agenda** (+ impegni) |
+| Istruttore | **Agenda** (+ impegni) |
+
+- **Impegni**: ognuno aggiunge i propri; compaiono anche nell'area riservata del sito.
+- **Cambio turno** (solo tra colleghi dello stesso ruolo): *copertura* (il collega prende il tuo turno) o *scambio*
+  (vi scambiate due turni). Il collega accetta o rifiuta dall'app; se accetta i turni si aggiornano subito.
+  Il server ricontrolla che nessuno finisca con due turni sovrapposti.
+- **Schede**: "Salva modifiche" aggiorna la scheda attiva mantenendo i pesi già segnati dal cliente;
+  "Salva come nuova" archivia la vecchia e ne crea una nuova (lo storico pesi riparte da zero).
+
+Account di prova in più (per provare i cambi turno dai due lati):
+`reception2@demo.it` / `Reception2026!` (Sara) e `trainer2@demo.it` / `Trainer2026!` (Luca).

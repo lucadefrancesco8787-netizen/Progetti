@@ -10,7 +10,7 @@
     tl.from('.hero__media img', { scale: 1.35, duration: 2.2 })
       .from('.hero__title .line > span', { yPercent: 110, duration: 1.4, stagger: 0.12 }, 0.2)
       .from('[data-hero-fade]', { y: 30, opacity: 0, duration: 1.2, stagger: 0.1 }, 0.6)
-      .from('.header', { yPercent: -100, duration: 1 }, 0.8);
+      .from('.header', { yPercent: -100, duration: 1, clearProps: 'transform' }, 0.8); // clearProps: un transform rimasto sull'header "intrappolerebbe" il menu mobile
 
     // Allo scroll l'immagine si "stacca" e si arrotonda, il titolo sale
     gsap.timeline({
@@ -73,14 +73,68 @@
         scrollTrigger: { trigger: '.corridor', start: 'top top', end: '+=180%', scrub: 0.8, pin: true, refreshPriority: 2 },
       });
       tl.to(paths, { strokeDashoffset: 0, stagger: 0.08, duration: 0.5, ease: 'none' })
-        .from('[data-corridor-text]', { opacity: 0, y: 40, duration: 0.3 }, 0.15)
+        // autoAlpha (non solo opacity): quando il testo è sparito il pulsante non resta cliccabile "invisibile"
+        .from('[data-corridor-text]', { autoAlpha: 0, y: 40, duration: 0.3 }, 0.15)
         .to(svg, { scale: 1.9, transformOrigin: '50% 48%', duration: 0.6, ease: 'power1.in' }, 0.65)
-        .to('[data-corridor-text]', { opacity: 0, y: -40, duration: 0.25 }, 0.75)
+        .to('[data-corridor-text]', { autoAlpha: 0, y: -40, duration: 0.25 }, 0.75)
         .fromTo('[data-corridor-photo]', { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4 }, 0.85);
     } else {
       document.querySelector('[data-corridor-photo]').style.opacity = 0;
     }
+
+    /* "Accedi" dal corridoio: si entra negli archi e si arriva al login */
+    const cta = document.querySelector('.corridor__cta');
+    if (cta && anim) {
+      cta.addEventListener('click', (e) => {
+        // Ctrl/Cmd/clic centrale: lascia aprire normalmente in un'altra scheda
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        entraNelCorridoio(cta.href);
+      });
+    }
   }
+
+  function entraNelCorridoio(href) {
+    if (document.querySelector('.portal')) return;
+    // Intanto il browser inizia a scaricare la pagina di login
+    const pre = document.createElement('link');
+    pre.rel = 'prefetch'; pre.href = href;
+    document.head.appendChild(pre);
+
+    const portal = document.createElement('div');
+    portal.className = 'portal';
+    const archi = svg.cloneNode(true);
+    archi.removeAttribute('id');
+    archi.classList.add('portal__svg');
+    archi.style.transform = '';
+    const flash = document.createElement('div');
+    flash.className = 'portal__flash';
+    portal.append(archi, flash);
+    document.body.appendChild(portal);
+
+    const cornici = archi.querySelectorAll('path');
+    const start = gsap.getProperty(svg, 'scale') || 1;
+    gsap.set(archi, { scale: start, transformOrigin: '50% 55%' });
+
+    gsap.timeline({
+      onComplete: () => {
+        try { sessionStorage.setItem('zc-portal', '1'); } catch { /* opzionale */ }
+        location.href = href;
+      },
+    })
+      .to(portal, { opacity: 1, duration: 0.25, ease: 'power1.out' })
+      .to(cornici, { strokeDashoffset: 0, duration: 0.3, ease: 'power2.out' }, 0)
+      // Le cornici si accendono una dopo l'altra, dalla più vicina alla più lontana
+      .to(cornici, { opacity: 1, strokeWidth: 3.2, stagger: 0.04, duration: 0.25 }, 0.1)
+      // Il "volo" dentro il corridoio
+      .to(archi, { scale: 14, duration: 1.3, ease: 'power3.in' }, 0.2)
+      .to(flash, { scale: 1, opacity: 1, duration: 0.55, ease: 'power2.in' }, 1.0);
+  }
+
+  // Tornando indietro col browser la pagina può essere ripresa dalla cache: togli il portale
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) document.querySelectorAll('.portal').forEach((p) => p.remove());
+  });
 
   /* ---------------- CORSI (scroll orizzontale) ---------------- */
   const track = document.getElementById('courseTrack');

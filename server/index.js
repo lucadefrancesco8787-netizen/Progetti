@@ -8,6 +8,8 @@ import { db, migrate } from './db.js';
 import { visbody } from './visbody.js';
 import { auth, utenteDaRichiesta } from './auth.js';
 import { area } from './area.js';
+import { appCliente } from './app-cliente.js';
+import { staff } from './staff.js';
 import { seedDemo } from './seed.js';
 
 migrate();
@@ -17,6 +19,19 @@ fs.mkdirSync(config.uploadDir, { recursive: true });
 const app = express();
 app.disable('x-powered-by');
 app.set('trust proxy', 'loopback'); // dietro Nginx/Caddy sul server, req.ip resta quello vero
+
+// Protezione anteprima: se SITE_PASSWORD è impostata, il browser chiede utente e password
+if (config.sitePassword) {
+  const atteso = Buffer.from(`${config.siteUser}:${config.sitePassword}`);
+  app.use((req, res, next) => {
+    const [tipo, valore] = (req.headers.authorization || '').split(' ');
+    const dato = tipo === 'Basic' && valore ? Buffer.from(valore, 'base64') : Buffer.alloc(0);
+    if (dato.length === atteso.length && crypto.timingSafeEqual(dato, atteso)) return next();
+    res.setHeader('WWW-Authenticate', 'Basic realm="Zeta Club - anteprima", charset="UTF-8"');
+    res.status(401).send('Accesso riservato.');
+  });
+  console.log('Protezione anteprima attiva (utente: ' + config.siteUser + ').');
+}
 
 // Area riservata: senza login si va alla pagina di accesso, e viceversa
 app.get(['/area', '/area.html'], (req, res, next) => (utenteDaRichiesta(req) ? next() : res.redirect('/accedi')));
@@ -93,6 +108,8 @@ app.get('/api/candidature', (req, res) => {
 app.use('/api/visbody', visbody);
 app.use('/api/auth', auth);
 app.use('/api/area', area);
+app.use('/api/app', appCliente);
+app.use('/api/staff', staff);
 
 app.use('/api', (_req, res) => res.status(404).json({ ok: false, errore: 'Risorsa non trovata.' }));
 app.use((err, _req, res, _next) => {

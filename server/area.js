@@ -48,14 +48,17 @@ const SQL_APP = `
     LEFT JOIN utenti s ON s.id = a.staff_id
     LEFT JOIN utenti c ON c.id = a.cliente_id`;
 
-/* ---------- Dati per ruolo ---------- */
-const viste = {
-  cliente(u, oggi, adesso) {
-    const app = appDaRighe(db.prepare(`${SQL_APP} WHERE a.cliente_id = ? AND a.stato != 'annullato'`).all(u.id), 'cliente');
-    const vb = visbodyDaRighe(db.prepare(`SELECT * FROM prenotazioni_visbody WHERE email = ? AND stato = 'confermata'`).all(u.email), false);
-    const { futuri, passati } = dividi([...app, ...vb], oggi, adesso);
-    return { appuntamenti: futuri, storico: passati.slice(0, 6) };
-  },
+// Appuntamenti del cliente (usata anche dall'app, server/app-cliente.js)
+export function appuntamentiCliente(u, oggi, adesso) {
+  const app = appDaRighe(db.prepare(`${SQL_APP} WHERE a.cliente_id = ? AND a.stato != 'annullato'`).all(u.id), 'cliente');
+  const vb = visbodyDaRighe(db.prepare(`SELECT * FROM prenotazioni_visbody WHERE email = ? AND stato = 'confermata'`).all(u.email), false);
+  const { futuri, passati } = dividi([...app, ...vb], oggi, adesso);
+  return { appuntamenti: futuri, storico: passati.slice(0, 6) };
+}
+
+/* ---------- Dati per ruolo (usati anche dall'app dello staff, server/staff.js) ---------- */
+export const viste = {
+  cliente: appuntamentiCliente,
 
   receptionist(u, oggi) {
     const turni = db.prepare(`SELECT id, data, inizio, fine, area, note FROM turni WHERE utente_id = ? AND data BETWEEN ? AND ? ORDER BY data, inizio`)
@@ -71,7 +74,7 @@ const viste = {
 
   consulente(u, oggi, adesso) {
     const chiamate = db.prepare(
-      `SELECT id, cliente_nome, telefono, motivo, data, ora, esito, completata_il FROM chiamate
+      `SELECT id, cliente_nome, telefono, motivo, data, ora, esito, note, completata_il FROM chiamate
         WHERE consulente_id = ? AND (completata_il IS NULL OR completata_il >= datetime('now', '-2 days'))
         ORDER BY completata_il IS NOT NULL, data, ora`
     ).all(u.id);
@@ -137,7 +140,11 @@ area.get('/', (req, res) => {
   const u = req.utente;
   const { data: oggi, minuti } = oraItaliana();
   const adesso = toHHMM(minuti);
-  res.json({ ok: true, oggi, adesso, utente: { nome: u.nome, cognome: u.cognome, ruolo: u.ruolo }, ...viste[u.ruolo](u, oggi, adesso) });
+  // Impegni aggiunti dallo staff dall'app (riunioni, formazione…): compaiono anche qui
+  const impegni = u.ruolo === 'cliente' ? undefined : db.prepare(
+    `SELECT id, titolo, data, inizio, fine, luogo, note FROM impegni WHERE utente_id = ? AND data BETWEEN ? AND ? ORDER BY data, inizio`
+  ).all(u.id, oggi, aggiungiGiorni(oggi, GIORNI_AGENDA)).filter((i) => i.data > oggi || i.fine > adesso);
+  res.json({ ok: true, oggi, adesso, utente: { nome: u.nome, cognome: u.cognome, ruolo: u.ruolo }, ...viste[u.ruolo](u, oggi, adesso), impegni });
 });
 
 area.post('/attivita/:id', soloJson, (req, res) => {

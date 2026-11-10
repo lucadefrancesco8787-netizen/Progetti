@@ -1,0 +1,17 @@
+{
+  "name": "Zeta Club",
+  "short_name": "Zeta Club",
+  "description": "Appuntamenti, scheda di allenamento e risultati delle visite.",
+  "lang": "it",
+  "start_url": "/app/",
+  "scope": "/app/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0c0c",
+  "theme_color": "#0b0c0c",
+  "icons": [
+    { "src": "/app/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/app/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/app/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

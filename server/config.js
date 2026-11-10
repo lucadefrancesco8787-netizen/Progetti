@@ -21,4 +21,7 @@ export const config = {
   // In produzione (HTTPS) il cookie di sessione va marcato Secure
   cookieSecure: process.env.COOKIE_SECURE === 'true',
   sessionDays: Number(process.env.SESSION_DAYS) || 7,
+  // Se impostata, tutto il sito chiede utente e password (per anteprime pubbliche)
+  siteUser: process.env.SITE_USER || 'zetaclub',
+  sitePassword: process.env.SITE_PASSWORD || '',
 };
