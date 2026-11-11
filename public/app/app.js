@@ -216,17 +216,26 @@ function renderScheda({ scheda }) {
 function cardEsercizio(e, i) {
   const rx = [`<span><b>${e.serie}</b> serie</span>`, `<span><b>${esc(e.ripetizioni)}</b>${/^[\d\s–-]+$/.test(e.ripetizioni) ? ' rip.' : ''}</span>`];
   // Il recupero è mostrato sul pulsante del timer (m:ss), non qui
+  // Un peso per ogni serie: cambiando una serie cambiano anche quelle dopo (vedi collegaScheda)
+  const righeSerie = e.conPeso ? (e.oggiSerie || [e.oggi]).map((p, s) => {
+    const prima = e.ultimoSerie?.[s] ?? e.ultimo?.peso_kg;
+    return `
+        <div class="set-row">
+          <span class="set-row__n">Serie ${s + 1}</span>
+          <div class="stepper">
+            <button type="button" data-step="-1" aria-label="Diminuisci peso della serie ${s + 1}">−</button>
+            <label><input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" data-peso="${s}"
+              value="${p != null ? kg(p) : ''}" placeholder="${prima != null ? kg(prima) : '0'}"
+              aria-label="Peso di oggi per ${esc(e.nome)}, serie ${s + 1}, in chilogrammi"><span class="unit">kg</span></label>
+            <button type="button" data-step="1" aria-label="Aumenta peso della serie ${s + 1}">+</button>
+          </div>
+        </div>`;
+  }).join('') : '';
   const log = e.conPeso ? `
       <div class="ex__log">
         <div class="ex__last">${e.ultimo ? `Ultima volta<br><b>${kg(e.ultimo.peso_kg)} kg</b> · ${esc(fa(e.ultimo.data))}` : 'Prima volta:<br>segna il peso usato'}</div>
-        <div class="stepper">
-          <button type="button" data-step="-1" aria-label="Diminuisci peso">−</button>
-          <label><input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" data-peso
-            value="${e.oggi != null ? kg(e.oggi) : ''}" placeholder="${e.ultimo ? kg(e.ultimo.peso_kg) : '0'}"
-            aria-label="Peso di oggi per ${esc(e.nome)}, in chilogrammi"><span class="unit">kg</span></label>
-          <button type="button" data-step="1" aria-label="Aumenta peso">+</button>
-        </div>
       </div>
+      <div class="set-list">${righeSerie}</div>
       <div class="ex__foot">
         <span class="save-state ${e.oggi != null ? 'ok' : ''}" data-stato>${e.oggi != null ? '✓ Segnato oggi' : ''}</span>
         ${e.ultimo || e.oggi != null ? `<button type="button" class="link-btn" data-storico>Andamento</button>` : ''}
@@ -258,6 +267,9 @@ function aggiornaProgresso() {
 }
 
 const timers = new Map();
+// Salvataggi dei pesi in corso, per esercizio. Sta fuori da collegaScheda perché la scheda
+// può essere ridisegnata mentre un salvataggio è ancora in viaggio.
+const salvataggi = { inViaggio: new Set(), daRifare: new Map() };
 function collegaScheda() {
   view.querySelectorAll('[data-giorno]').forEach((b) => b.addEventListener('click', () => {
     state.giorno = Number(b.dataset.giorno);
@@ -268,52 +280,91 @@ function collegaScheda() {
     const id = Number(card.dataset.es);
     const ex = trovaEsercizio(id);
     card.querySelector('[data-timer]')?.addEventListener('click', () => avviaRecupero({ secondi: ex.recupero, titolo: ex.nome }));
-    const input = card.querySelector('[data-peso]');
-    if (!input) return;
+    const inputs = [...card.querySelectorAll('[data-peso]')];
+    if (!inputs.length) return;
     const stato = card.querySelector('[data-stato]');
     const e = trovaEsercizio(id);
 
-    const leggi = () => { const v = input.value.trim().replace(',', '.'); return v === '' ? null : Number(v); };
+    // Solo numeri scritti normalmente ("40", "42,5", "42.5"); "0x10", "1e2" ecc. → NaN (peso non valido)
+    const leggi = (inp) => { const v = inp.value.trim(); return v === '' ? null : /^\d+([.,]\d+)?$/.test(v) ? Number(v.replace(',', '.')) : NaN; };
+    // Cambiare il peso di una serie lo copia su tutte le serie dopo (restano modificabili una per una).
+    // Le serie dopo si calcolano dai valori che avevano quando si è iniziato a modificare:
+    // così cancellando "40" un tasto alla volta non resta il "4" di passaggio, e svuotare
+    // una serie rimette le altre com'erano.
+    let prima = null; // { i, valori } delle serie dopo, all'inizio della modifica in corso
+    const propaga = (i) => {
+      if (!prima || prima.i !== i) prima = { i, valori: inputs.slice(i + 1).map((x) => x.value) };
+      const v = inputs[i].value.trim();
+      inputs.slice(i + 1).forEach((inp, k) => { inp.value = v !== '' ? v : prima.valori[k]; });
+    };
+    const fineModifica = () => { prima = null; };
 
+    const esito = () => {
+      stato.className = `save-state ${e.oggi != null ? 'ok' : ''}`;
+      stato.textContent = e.oggi != null ? '✓ Salvato' : 'Peso cancellato';
+    };
+
+    // Un solo salvataggio alla volta per esercizio: se ne serve un altro mentre uno è in viaggio,
+    // si rifà alla fine con i valori di quel momento (così l'ultimo valore scritto vince sempre).
     async function salva() {
-      const v = leggi();
-      if (v != null && (!Number.isFinite(v) || v < 0 || v > 1000)) { stato.className = 'save-state err'; stato.textContent = 'Peso non valido'; return; }
-      if (v === e.oggi) return;
+      if (salvataggi.inViaggio.has(id)) { salvataggi.daRifare.set(id, salva); return; }
+      const pesi = inputs.map(leggi);
+      if (pesi.some((v) => v != null && (!Number.isFinite(v) || v < 0 || v > 1000))) { stato.className = 'save-state err'; stato.textContent = 'Peso non valido'; return; }
+      if (JSON.stringify(pesi) === JSON.stringify(e.oggiSerie)) {
+        if (stato.textContent === 'Salvataggio…') esito(); // giro rifatto senza modifiche nuove
+        return;
+      }
       stato.className = 'save-state'; stato.textContent = 'Salvataggio…';
+      salvataggi.inViaggio.add(id);
       try {
-        const r = await api(`/api/app/esercizi/${id}/peso`, { method: 'PUT', body: JSON.stringify({ peso_kg: v }) });
+        const r = await api(`/api/app/esercizi/${id}/serie`, { method: 'PUT', body: JSON.stringify({ pesi }) });
+        e.oggiSerie = r.pesi;
         e.oggi = r.peso_kg;
         card.classList.toggle('done', e.oggi != null);
         card.querySelector('.ex__n').textContent = e.oggi != null ? '✓' : [...card.parentNode.querySelectorAll('.ex')].indexOf(card) + 1;
-        stato.className = `save-state ${e.oggi != null ? 'ok' : ''}`;
-        stato.textContent = e.oggi != null ? '✓ Salvato' : 'Peso cancellato';
+        if (!salvataggi.daRifare.has(id)) esito(); // "Salvato" solo se non c'è un altro salvataggio in coda
         if (e.oggi != null && !card.querySelector('[data-storico]')) {
           card.querySelector('.ex__foot').insertAdjacentHTML('beforeend', '<button type="button" class="link-btn" data-storico>Andamento</button>');
           card.querySelector('[data-storico]').addEventListener('click', () => apriStorico(e));
         }
         aggiornaProgresso();
       } catch (ex) {
-        if (ex.message === 'login') return;
-        stato.className = 'save-state err';
-        stato.textContent = navigator.onLine ? ex.message : 'Sei offline: riprova quando torna la rete';
+        if (ex.message === 'login') salvataggi.daRifare.delete(id); // sessione scaduta: niente secondo tentativo
+        else {
+          stato.className = 'save-state err';
+          stato.textContent = navigator.onLine ? ex.message : 'Sei offline: riprova quando torna la rete';
+        }
+      } finally {
+        salvataggi.inViaggio.delete(id);
+        const rifai = salvataggi.daRifare.get(id);
+        salvataggi.daRifare.delete(id);
+        rifai?.();
       }
     }
     const salvaPresto = (ms) => { clearTimeout(timers.get(id)); timers.set(id, setTimeout(salva, ms)); };
 
-    input.addEventListener('input', () => { stato.className = 'save-state'; stato.textContent = ''; salvaPresto(1200); });
-    input.addEventListener('change', () => salvaPresto(0));
-    input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') input.blur(); });
+    inputs.forEach((input, i) => {
+      input.addEventListener('input', () => { propaga(i); stato.className = 'save-state'; stato.textContent = ''; salvaPresto(1200); });
+      input.addEventListener('change', () => { fineModifica(); salvaPresto(0); });
+      input.addEventListener('blur', fineModifica);
+      input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') input.blur(); });
 
-    // +/−: passo 2,5 kg (1 kg sotto i 10 kg); se vuoto parte dall'ultima volta
-    card.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => {
-      const dir = Number(b.dataset.step);
-      const base = leggi() ?? e.ultimo?.peso_kg ?? 0;
-      const passo = base < 10 || (base === 10 && dir < 0) ? 1 : 2.5;
-      const nuovo = leggi() == null && e.ultimo ? base : Math.max(0, Math.round((base + dir * passo) * 100) / 100);
-      input.value = kg(nuovo);
-      stato.className = 'save-state'; stato.textContent = '';
-      salvaPresto(900);
-    }));
+      // +/−: passo 2,5 kg (1 kg sotto i 10 kg); se vuoto parte dal peso suggerito (ultima volta)
+      input.closest('.stepper').querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => {
+        const dir = Number(b.dataset.step);
+        const suggerito = e.ultimoSerie?.[i] ?? e.ultimo?.peso_kg ?? null;
+        const letto = Number.isFinite(leggi(input)) ? leggi(input) : null; // scritta non valida: si riparte dal suggerito
+        const base = letto ?? suggerito ?? 0;
+        const passo = base < 10 || (base === 10 && dir < 0) ? 1 : 2.5;
+        const nuovo = letto == null && suggerito != null ? base : Math.max(0, Math.round((base + dir * passo) * 100) / 100);
+        input.value = kg(nuovo);
+        fineModifica(); // ogni tocco su +/− è una modifica completa
+        propaga(i);
+        fineModifica();
+        stato.className = 'save-state'; stato.textContent = '';
+        salvaPresto(900);
+      }));
+    });
 
     card.querySelector('[data-storico]')?.addEventListener('click', () => apriStorico(e));
   });

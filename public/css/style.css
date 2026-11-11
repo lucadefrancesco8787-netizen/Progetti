@@ -895,7 +895,11 @@ a.promo:hover { transform: translateY(-4px); }
 .pex__rx { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 5px 0 0; font-size: 14px; color: var(--muted); }
 .pex__rx b { color: var(--ink); }
 .pex__note { margin: 6px 0 0; font-size: 13px; color: var(--muted); font-style: italic; }
-.pex__log { display: grid; grid-template-columns: auto auto; align-items: center; gap: 6px 14px; justify-items: end; }
+.pex__log { display: grid; grid-template-columns: auto; align-items: center; gap: 8px 14px; justify-items: end; }
+/* Un peso per serie */
+.pex__sets { display: flex; flex-direction: column; gap: 6px; }
+.pex__set { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+.pex__set-n { font-size: 13px; font-weight: 700; color: var(--muted); }
 .pex__log--none { font-size: 13px; color: var(--muted); padding-top: 6px; }
 .pex__last { font-size: 13px; line-height: 1.3; color: var(--muted); text-align: right; }
 .pex__last b { color: var(--ink); }
@@ -942,6 +946,8 @@ a.promo:hover { transform: translateY(-4px); }
   .pex__last { text-align: left; }
   .pex__last br { display: none; }
   .pex__sep { display: inline; }
+  .pex__sets { width: 100%; }
+  .pex__set { justify-content: space-between; }
   .pex__foot { justify-content: space-between; } /* sta dentro .pex__log: niente grid-column, altrimenti crea una 2ª colonna */
   .pex__hist { grid-column: 1 / -1; padding: 12px; }
 }

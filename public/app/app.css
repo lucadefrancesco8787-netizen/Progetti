@@ -161,7 +161,7 @@ svg { display: block; }
 .ex__rx { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 6px; font-size: 14px; color: var(--text-2); }
 .ex__rx b { color: var(--text); font-weight: 800; }
 .ex__note { margin: 10px 0 0 40px; font-size: 13px; color: var(--muted); }
-.ex__log { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; margin: 14px 0 0 40px; }
+.ex__log { display: grid; grid-template-columns: 1fr; align-items: center; gap: 10px; margin: 14px 0 0 40px; }
 .ex__last { font-size: 13px; color: var(--muted); line-height: 1.3; }
 .ex__last b { color: var(--text-2); }
 .ex__foot { display: flex; justify-content: space-between; align-items: center; margin: 10px 0 0 40px; min-height: 22px; font-size: 13px; }
@@ -180,6 +180,10 @@ svg { display: block; }
 .stepper input::placeholder { color: rgba(255, 255, 255, .28); }
 .stepper input:focus { outline: none; }
 .stepper .unit { padding-right: 4px; font-size: 13px; font-weight: 700; color: var(--muted); }
+/* Un peso per serie */
+.set-list { display: flex; flex-direction: column; gap: 6px; margin: 10px 0 0 40px; }
+.set-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.set-row__n { font-size: 14px; font-weight: 700; color: var(--text-2); }
 .plan-notes { margin-top: 18px; font-size: 14px; color: var(--text-2); }
 
 /* ---------- Visita ---------- */

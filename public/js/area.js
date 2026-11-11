@@ -348,13 +348,20 @@
         ${e.conPeso ? `
         <div class="pex__log">
           <span class="pex__last">${e.ultimo ? `Ultima volta <b>${kg(e.ultimo.peso_kg)} kg</b><br><span class="pex__sep"> · </span>${esc(fa(e.ultimo.data))}` : 'Prima volta'}</span>
-          <div class="kg-stepper">
-            <button type="button" data-step="-1" aria-label="Diminuisci peso">−</button>
-            <input type="text" inputmode="decimal" autocomplete="off" data-peso value="${e.oggi != null ? kg(e.oggi) : ''}"
-              placeholder="${e.ultimo ? kg(e.ultimo.peso_kg) : '0'}" aria-label="Peso di oggi per ${esc(e.nome)}, in kg">
-            <span class="kg-stepper__unit">kg</span>
-            <button type="button" data-step="1" aria-label="Aumenta peso">+</button>
-          </div>
+          <div class="pex__sets">${(e.oggiSerie || [e.oggi]).map((p, s) => {
+            const prima = e.ultimoSerie?.[s] ?? e.ultimo?.peso_kg;
+            return `
+            <div class="pex__set">
+              <span class="pex__set-n">Serie ${s + 1}</span>
+              <div class="kg-stepper">
+                <button type="button" data-step="-1" aria-label="Diminuisci peso della serie ${s + 1}">−</button>
+                <input type="text" inputmode="decimal" autocomplete="off" data-peso="${s}" value="${p != null ? kg(p) : ''}"
+                  placeholder="${prima != null ? kg(prima) : '0'}" aria-label="Peso di oggi per ${esc(e.nome)}, serie ${s + 1}, in kg">
+                <span class="kg-stepper__unit">kg</span>
+                <button type="button" data-step="1" aria-label="Aumenta peso della serie ${s + 1}">+</button>
+              </div>
+            </div>`;
+          }).join('')}</div>
           <div class="pex__foot">
             <span class="pex__state ${e.oggi != null ? 'ok' : ''}" data-stato aria-live="polite">${e.oggi != null ? '✓ Segnato oggi' : ''}</span>
             ${e.ultimo || e.oggi != null ? `<button type="button" class="pex__hist-btn" data-storico aria-expanded="false">Andamento</button>` : ''}
@@ -365,6 +372,9 @@
   }
 
   const timers = new Map();
+  // Salvataggi dei pesi in corso, per esercizio. Sta fuori da collegaScheda perché la scheda
+  // può essere ridisegnata (cambio giorno) mentre un salvataggio è ancora in viaggio.
+  const salvataggi = { inViaggio: new Set(), daRifare: new Map() };
   function collegaScheda() {
     const root = $('planBody');
     root.querySelectorAll('[data-giorno]').forEach((b) => b.addEventListener('click', () => { cliente.giorno = Number(b.dataset.giorno); renderSchedaDiNuovo(); }));
@@ -372,7 +382,7 @@
     root.querySelectorAll('.pex[data-es]').forEach((row) => {
       const id = Number(row.dataset.es);
       const e = cliente.scheda.giorni.flatMap((g) => g.esercizi).find((x) => x.id === id);
-      const input = row.querySelector('[data-peso]');
+      const inputs = [...row.querySelectorAll('[data-peso]')];
       const stato = row.querySelector('[data-stato]');
       // Timer di recupero condiviso con l'app (public/app/timer.js)
       row.querySelector('[data-timer]')?.addEventListener('click', async () => {
@@ -380,21 +390,45 @@
         t.avviaRecupero({ secondi: e.recupero, titolo: e.nome });
       });
       row.querySelector('[data-storico]')?.addEventListener('click', (ev) => toggleStorico(row, e, ev.currentTarget));
-      if (!input) return;
-      const leggi = () => { const v = input.value.trim().replace(',', '.'); return v === '' ? null : Number(v); };
+      if (!inputs.length) return;
+      // Solo numeri scritti normalmente ("40", "42,5", "42.5"); "0x10", "1e2" ecc. → NaN (peso non valido)
+      const leggi = (inp) => { const v = inp.value.trim(); return v === '' ? null : /^\d+([.,]\d+)?$/.test(v) ? Number(v.replace(',', '.')) : NaN; };
+      // Cambiare il peso di una serie lo copia su tutte le serie dopo (restano modificabili una per una).
+      // Le serie dopo si calcolano dai valori che avevano quando si è iniziato a modificare:
+      // così cancellando "40" un tasto alla volta non resta il "4" di passaggio, e svuotare
+      // una serie rimette le altre com'erano.
+      let prima = null; // { i, valori } delle serie dopo, all'inizio della modifica in corso
+      const propaga = (i) => {
+        if (!prima || prima.i !== i) prima = { i, valori: inputs.slice(i + 1).map((x) => x.value) };
+        const v = inputs[i].value.trim();
+        inputs.slice(i + 1).forEach((inp, k) => { inp.value = v !== '' ? v : prima.valori[k]; });
+      };
+      const fineModifica = () => { prima = null; };
 
+      const esito = () => {
+        stato.className = `pex__state ${e.oggi != null ? 'ok' : ''}`;
+        stato.textContent = e.oggi != null ? '✓ Salvato' : 'Peso cancellato';
+      };
+
+      // Un solo salvataggio alla volta per esercizio: se ne serve un altro mentre uno è in viaggio,
+      // si rifà alla fine con i valori di quel momento (così l'ultimo valore scritto vince sempre).
       async function salva() {
-        const v = leggi();
-        if (v != null && (!Number.isFinite(v) || v < 0 || v > 1000)) { stato.className = 'pex__state err'; stato.textContent = 'Peso non valido'; return; }
-        if (v === e.oggi) return;
+        if (salvataggi.inViaggio.has(id)) { salvataggi.daRifare.set(id, salva); return; }
+        const pesi = inputs.map(leggi);
+        if (pesi.some((v) => v != null && (!Number.isFinite(v) || v < 0 || v > 1000))) { stato.className = 'pex__state err'; stato.textContent = 'Peso non valido'; return; }
+        if (JSON.stringify(pesi) === JSON.stringify(e.oggiSerie)) {
+          if (stato.textContent === 'Salvataggio…') esito(); // giro rifatto senza modifiche nuove
+          return;
+        }
         stato.className = 'pex__state'; stato.textContent = 'Salvataggio…';
+        salvataggi.inViaggio.add(id);
         try {
-          const r = await put(`/api/app/esercizi/${id}/peso`, { peso_kg: v });
+          const r = await put(`/api/app/esercizi/${id}/serie`, { pesi });
+          e.oggiSerie = r.pesi;
           e.oggi = r.peso_kg;
           row.classList.toggle('is-done', e.oggi != null);
           row.querySelector('.pex__n').textContent = e.oggi != null ? '✓' : [...row.parentNode.children].indexOf(row) + 1;
-          stato.className = `pex__state ${e.oggi != null ? 'ok' : ''}`;
-          stato.textContent = e.oggi != null ? '✓ Salvato' : 'Peso cancellato';
+          if (!salvataggi.daRifare.has(id)) esito(); // "Salvato" solo se non c'è un altro salvataggio in coda
           if (e.oggi != null && !row.querySelector('[data-storico]')) {
             row.querySelector('.pex__foot').insertAdjacentHTML('beforeend', '<button type="button" class="pex__hist-btn" data-storico aria-expanded="false">Andamento</button>');
             row.querySelector('[data-storico]').addEventListener('click', (ev) => toggleStorico(row, e, ev.currentTarget));
@@ -405,21 +439,34 @@
           $('planProgress').textContent = `${g.esercizi.filter((x) => x.oggi != null).length}/${g.esercizi.filter((x) => x.conPeso).length} pesi segnati oggi`;
         } catch (ex) {
           stato.className = 'pex__state err'; stato.textContent = ex.message;
+        } finally {
+          salvataggi.inViaggio.delete(id);
+          const rifai = salvataggi.daRifare.get(id);
+          salvataggi.daRifare.delete(id);
+          rifai?.();
         }
       }
       const presto = (ms) => { clearTimeout(timers.get(id)); timers.set(id, setTimeout(salva, ms)); };
-      input.addEventListener('input', () => { stato.className = 'pex__state'; stato.textContent = ''; presto(1200); });
-      input.addEventListener('change', () => presto(0));
-      input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') input.blur(); });
-      // +/−: passo 2,5 kg (1 kg sotto i 10 kg); se il campo è vuoto parte dal peso dell'ultima volta
-      row.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => {
-        const dir = Number(b.dataset.step);
-        const base = leggi() ?? e.ultimo?.peso_kg ?? 0;
-        const passo = base < 10 || (base === 10 && dir < 0) ? 1 : 2.5;
-        input.value = kg(leggi() == null && e.ultimo ? base : Math.max(0, Math.round((base + dir * passo) * 100) / 100));
-        stato.className = 'pex__state'; stato.textContent = '';
-        presto(900);
-      }));
+      inputs.forEach((input, i) => {
+        input.addEventListener('input', () => { propaga(i); stato.className = 'pex__state'; stato.textContent = ''; presto(1200); });
+        input.addEventListener('change', () => { fineModifica(); presto(0); });
+        input.addEventListener('blur', fineModifica);
+        input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') input.blur(); });
+        // +/−: passo 2,5 kg (1 kg sotto i 10 kg); se il campo è vuoto parte dal peso suggerito (ultima volta)
+        input.closest('.kg-stepper').querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => {
+          const dir = Number(b.dataset.step);
+          const suggerito = e.ultimoSerie?.[i] ?? e.ultimo?.peso_kg ?? null;
+          const letto = Number.isFinite(leggi(input)) ? leggi(input) : null; // scritta non valida: si riparte dal suggerito
+          const base = letto ?? suggerito ?? 0;
+          const passo = base < 10 || (base === 10 && dir < 0) ? 1 : 2.5;
+          input.value = kg(letto == null && suggerito != null ? base : Math.max(0, Math.round((base + dir * passo) * 100) / 100));
+          fineModifica(); // ogni tocco su +/− è una modifica completa
+          propaga(i);
+          fineModifica();
+          stato.className = 'pex__state'; stato.textContent = '';
+          presto(900);
+        }));
+      });
     });
   }
   function renderSchedaDiNuovo() {
