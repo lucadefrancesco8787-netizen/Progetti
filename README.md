@@ -74,6 +74,16 @@ Per vedere l'elenco: `GET /api/candidature?token=<ADMIN_TOKEN>`.
 4. `npm start` (meglio se gestito da PM2, systemd o Docker), dietro un proxy HTTPS (Nginx o Caddy).
 5. Fai in modo che la cartella `data/` sia persistente e inclusa nei backup.
 
+### Anteprima online su Render (gratis)
+
+Il file `render.yaml` contiene già tutto: su [render.com](https://render.com) → **New → Blueprint** → scegli questo repository.
+Il sito si aggiorna da solo a ogni push su `main` ed è protetto da password (utente `zetaclub`, password in
+Render → servizio → *Environment* → `SITE_PASSWORD`).
+
+Limiti del piano gratuito: dopo 15 minuti senza visite il sito si spegne (la prima apertura dopo richiede ~1 minuto) e
+il disco non è permanente, quindi a ogni riavvio i dati tornano quelli dimostrativi. Per l'uso vero serve un piano
+con disco persistente (`DATABASE_PATH` e `UPLOAD_DIR` sul disco) e `SEED_DEMO=false`.
+
 **Passaggio a PostgreSQL**: la struttura dati è in `server/migrations/`. Basta riscrivere `server/db.js` per usare `pg` e
 leggere un `DATABASE_URL`. Le route in `server/index.js` usano solo query SQL standard.
 
@@ -87,7 +97,7 @@ leggere un `DATABASE_URL`. Le route in `server/index.js` usano solo query SQL st
 Web app installabile (PWA) per i clienti: su iPhone si apre in Safari e si aggiunge alla schermata Home
 (Condividi → "Aggiungi alla schermata Home"), poi si usa a schermo intero come un'app.
 
-- **Oggi**: prossimo appuntamento, allenamento consigliato (il giorno di scheda fatto meno di recente), ultima visita.
+- **Oggi**: prima gli impegni dei prossimi 3 giorni (se ci sono), poi Visbody (prossima analisi e ultima), infine tutti i giorni della scheda da scegliere.
 - **Agenda**: tutti gli appuntamenti futuri (visite, consulenze, personal, Visbody).
 - **Scheda**: la scheda attiva divisa per giorni; per ogni esercizio si segna il peso usato oggi
   (salvataggio automatico, uno per esercizio al giorno) e si vede l'andamento nel tempo.

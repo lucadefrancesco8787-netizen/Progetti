@@ -18,7 +18,7 @@ fs.mkdirSync(config.uploadDir, { recursive: true });
 
 const app = express();
 app.disable('x-powered-by');
-app.set('trust proxy', 'loopback'); // dietro Nginx/Caddy sul server, req.ip resta quello vero
+app.set('trust proxy', config.trustProxy); // così req.ip resta quello vero del visitatore (vedi TRUST_PROXY)
 
 // Protezione anteprima: se SITE_PASSWORD è impostata, il browser chiede utente e password
 if (config.sitePassword) {

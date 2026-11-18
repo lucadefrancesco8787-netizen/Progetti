@@ -1,0 +1,29 @@
+# Anteprima del sito su Render (render.com → New → Blueprint → questo repository)
+# Piano gratuito: si spegne dopo 15 minuti senza visite e i dati tornano quelli dimostrativi a ogni riavvio.
+services:
+  - type: web
+    name: zetaclub
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Account di prova e dati di esempio (si ricreano a ogni avvio, il disco non è permanente)
+      - key: SEED_DEMO
+        value: "true"
+      - key: COOKIE_SECURE
+        value: "true"
+      # Render ha un proxy davanti al sito
+      - key: TRUST_PROXY
+        value: "1"
+      # Anteprima protetta: il browser chiede utente e password (la password la genera Render)
+      - key: SITE_USER
+        value: zetaclub
+      - key: SITE_PASSWORD
+        generateValue: true
+      - key: ADMIN_TOKEN
+        generateValue: true

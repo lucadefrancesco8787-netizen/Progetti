@@ -21,6 +21,9 @@ export const config = {
   // In produzione (HTTPS) il cookie di sessione va marcato Secure
   cookieSecure: process.env.COOKIE_SECURE === 'true',
   sessionDays: Number(process.env.SESSION_DAYS) || 7,
+  // Di quali proxy fidarsi per conoscere l'IP vero del visitatore (limite ai tentativi di accesso).
+  // "loopback" = Nginx/Caddy sullo stesso server; un numero = quanti proxy davanti (es. 1 su Render)
+  trustProxy: /^\d+$/.test(process.env.TRUST_PROXY || '') ? Number(process.env.TRUST_PROXY) : process.env.TRUST_PROXY || 'loopback',
   // Se impostata, tutto il sito chiede utente e password (per anteprime pubbliche)
   siteUser: process.env.SITE_USER || 'zetaclub',
   sitePassword: process.env.SITE_PASSWORD || '',
