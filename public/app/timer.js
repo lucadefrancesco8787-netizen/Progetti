@@ -18,20 +18,20 @@ function crea() {
   const css = document.createElement('style');
   css.textContent = `
   .rt { position: fixed; left: 12px; right: 12px; z-index: 45; max-width: 520px; margin-inline: auto;
-    padding: 14px 16px 16px; border-radius: 22px; background: #151817; color: #fff; font-family: inherit;
-    box-shadow: 0 18px 50px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.08);
+    padding: 14px 16px 16px; border-radius: 22px; background: #ffffff; color: #0b0c0c; font-family: inherit;
+    box-shadow: 0 18px 50px -12px rgba(11,12,12,.28), 0 0 0 1px rgba(11,12,12,.08);
     transform: translateY(140%); transition: transform .35s cubic-bezier(.2,.7,.1,1); }
   .rt.is-on { transform: none; }
   .rt__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-  .rt__label { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #3fc26b; }
-  .rt__title { margin: 2px 0 0; font-size: 15px; font-weight: 700; color: rgba(255,255,255,.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 62vw; }
-  .rt__close { flex: none; width: 36px; height: 36px; border: 0; border-radius: 50%; background: #1d2120; color: #fff; font-size: 18px; cursor: pointer; }
+  .rt__label { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #15803d; }
+  .rt__title { margin: 2px 0 0; font-size: 15px; font-weight: 700; color: rgba(11,12,12,.72); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 62vw; }
+  .rt__close { flex: none; width: 36px; height: 36px; border: 0; border-radius: 50%; background: #f3f1ec; color: #0b0c0c; font-size: 18px; cursor: pointer; }
   .rt__main { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
   .rt__time { font-family: "Archivo", system-ui, sans-serif; font-weight: 800; font-size: 48px; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
   .rt__btns { display: flex; gap: 8px; }
-  .rt__btns button { min-width: 52px; height: 48px; padding: 0 10px; border: 0; border-radius: 14px; background: #1d2120; color: #fff; font: inherit; font-size: 15px; font-weight: 800; cursor: pointer; }
+  .rt__btns button { min-width: 52px; height: 48px; padding: 0 10px; border: 0; border-radius: 14px; background: #f3f1ec; color: #0b0c0c; font: inherit; font-size: 15px; font-weight: 800; cursor: pointer; }
   .rt__btns button:active, .rt__close:active { transform: scale(.96); }
-  .rt__bar { height: 6px; margin-top: 12px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .rt__bar { height: 6px; margin-top: 12px; border-radius: 3px; background: rgba(11,12,12,.08); overflow: hidden; }
   .rt__bar i { display: block; height: 100%; width: 100%; border-radius: 3px; background: linear-gradient(90deg, #14b3ac, #3fc26b, #d6e33b); transform-origin: left; }
   .rt.is-paused .rt__time { opacity: .55; }
   .rt.is-done { background: linear-gradient(135deg, #14b3ac, #3fc26b 55%, #d6e33b); color: #0b0c0c; animation: rtPulse .9s ease-in-out 3; }

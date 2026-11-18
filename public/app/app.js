@@ -150,14 +150,14 @@ window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); }
 window.addEventListener('scroll', () => $('.top')?.classList.toggle('scrolled', scrollY > 4), { passive: true });
 
 /* ---------- Appuntamenti ---------- */
-function cardAppuntamento(a, hero = false) {
+function cardAppuntamento(a, hero = false, conGiorno = hero) {
   const meta = [a.inizio && `${a.inizio}${a.fine ? `–${a.fine}` : ''}`, a.con, a.luogo].filter(Boolean).map(esc).join(' · ');
   return `
     <article class="card ${hero ? 'card--hero' : ''}">
       <div class="appt">
         <div class="appt__date"><b>${esc(fmt(a.data, { day: 'numeric' }))}</b><small>${esc(fmt(a.data, { month: 'short' }))}</small></div>
         <div>
-          ${hero ? `<div class="kicker">${esc(quando(a.data))}</div>` : ''}
+          ${conGiorno ? `<div class="kicker">${esc(quando(a.data))}</div>` : ''}
           <h3>${esc(a.titolo)}</h3>
           <p class="appt__meta">${meta}</p>
           ${a.dettaglio ? `<p class="appt__note">${esc(a.dettaglio)}</p>` : ''}
@@ -501,45 +501,70 @@ function renderVisita({ visite }) {
 }
 
 /* ---------- Oggi ---------- */
+// Impegni "urgenti": oggi, domani e dopodomani (il Visbody ha la sua sezione)
+const GIORNI_URGENTI = 2;
+const chev = '<svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
+
 function renderOggi(d) {
-  const prossimo = d.appuntamenti[0];
+  const urgenti = d.appuntamenti.filter((a) => a.tipo !== 'visbody' && giorniTra(d.oggi, a.data) <= GIORNI_URGENTI);
+  const vb = d.appuntamenti.find((a) => a.tipo === 'visbody');
+  const altri = d.appuntamenti.length - urgenti.length - (vb ? 1 : 0);
   const s = d.scheda;
-  const g = s && giornoConsigliato(s);
   const v = d.visite.ultima;
-  return `
-    <p class="hello">Ciao ${esc(d.utente.nome)}, pronto ad allenarti?</p>
 
-    <h2 class="section-title">Prossimo appuntamento</h2>
-    ${prossimo ? cardAppuntamento(prossimo, true) : '<div class="card empty"><strong>Niente in agenda</strong>Prenota una visita Visbody dal sito.</div>'}
-    ${d.appuntamenti.length > 1 ? `<a class="card today-plan" href="#appuntamenti" style="margin-top:10px"><p>Altri ${d.appuntamenti.length - 1} appuntamenti in agenda</p><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>` : ''}
+  // 1. Impegni più urgenti (solo se ci sono)
+  const htmlUrgenti = urgenti.length ? `
+    <h2 class="section-title">Da non dimenticare</h2>
+    ${urgenti.map((a) => cardAppuntamento(a, true)).join('')}` : '';
+  const linkAgenda = altri > 0 ? `
+    <a class="card today-plan" href="#appuntamenti" style="margin-top:10px"><p>${urgenti.length ? 'Altri' : 'Hai'} ${altri} appuntament${altri === 1 ? 'o' : 'i'} in agenda</p>${chev}</a>` : '';
 
-    <h2 class="section-title">Allenamento consigliato</h2>
-    ${g ? `
-      <a class="card today-plan" href="#scheda" data-vai-giorno="${g.id}">
-        <div>
-          <div class="kicker">${esc(g.nome.split('·')[0].trim())}</div>
-          <h3>${esc(g.nome.split('·').slice(1).join('·').trim() || g.nome)}</h3>
-          <p>${g.esercizi.length} esercizi · ${g.ultimaSeduta ? `ultima volta ${esc(fa(g.ultimaSeduta))}` : 'non ancora fatto'}</p>
-        </div>
-        <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
-      </a>` : '<div class="card empty"><strong>Nessuna scheda attiva</strong>Chiedi al tuo trainer.</div>'}
-
-    ${v ? `
-      <h2 class="section-title">Ultima visita</h2>
+  // 2. Visbody: prossima analisi prenotata e risultati dell'ultima
+  const htmlUltima = v ? `
       <a class="card today-plan" href="#visita" style="display:block">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><div class="kicker">Visbody · ${esc(fa(v.data))}</div></div>
-          <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+          <div class="kicker">Ultima analisi · ${esc(fa(v.data))}</div>
+          ${chev}
         </div>
         <div class="mini-metrics">
           <div><small>Peso</small><b>${num(v.valori.peso)}</b> <small style="display:inline">kg</small></div>
           <div><small>Grasso</small><b>${num(v.valori.grasso)}</b> <small style="display:inline">%</small></div>
           <div><small>Muscolo</small><b>${num(v.valori.muscolo)}</b> <small style="display:inline">kg</small></div>
         </div>
-      </a>` : ''}`;
+      </a>` : '';
+  const htmlPrenota = `
+      <a class="card today-plan" href="/visbody#prenota">
+        <div><h3>${v ? 'Prenota la prossima analisi' : 'Prenota la tua prima analisi'}</h3><p>Scegli trainer, giorno e ora</p></div>
+        ${chev}
+      </a>`;
+  const htmlVisbody = `
+    <h2 class="section-title">Visbody</h2>
+    ${vb ? cardAppuntamento(vb, !urgenti.length, true) : ''}
+    ${htmlUltima}
+    ${vb ? '' : htmlPrenota}`;
+
+  // 3. Allenamento: scegli tu il giorno, nessuno è consigliato
+  const htmlAllenamento = `
+    <h2 class="section-title">Scegli l'allenamento</h2>
+    ${s ? s.giorni.map((g) => `
+      <a class="card today-plan" href="#scheda" data-vai-giorno="${g.id}">
+        <div>
+          <div class="kicker">Giorno ${esc(g.nome.split('·')[0].trim())}</div>
+          <h3>${esc(g.nome.split('·').slice(1).join('·').trim() || g.nome)}</h3>
+          <p>${g.esercizi.length} esercizi · ${g.ultimaSeduta ? `ultima volta ${esc(fa(g.ultimaSeduta))}` : 'non ancora fatto'}</p>
+        </div>
+        ${chev}
+      </a>`).join('') : '<div class="card empty"><strong>Nessuna scheda attiva</strong>Chiedi al tuo trainer.</div>'}`;
+
+  return `
+    <p class="hello">Ciao ${esc(d.utente.nome)}, pronto ad allenarti?</p>
+    ${htmlUrgenti}
+    ${linkAgenda}
+    ${htmlVisbody}
+    ${htmlAllenamento}`;
 }
 SCHERMATE.oggi.dopo = () => {
-  view.querySelector('[data-vai-giorno]')?.addEventListener('click', (e) => { state.giorno = Number(e.currentTarget.dataset.vaiGiorno); });
+  view.querySelectorAll('[data-vai-giorno]').forEach((el) => el.addEventListener('click', () => { state.giorno = Number(el.dataset.vaiGiorno); }));
 };
 
 /* ---------- Foglio dal basso + profilo ---------- */

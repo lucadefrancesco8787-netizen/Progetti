@@ -3,8 +3,8 @@
  * anche con rete scarsa. I dati personali (/api) passano sempre dalla rete e non vengono mai salvati.
  * Quando cambi app.js o app.css, aumenta VERSIONE per far aggiornare i telefoni.
  */
-const VERSIONE = 'zc-app-v11';
-const SCOCCA = ['/app/', '/app/app.css', '/app/app.js', '/app/staff.js', '/app/timer.js', '/app/manifest.webmanifest', '/app/icons/icon-180.png', '/app/icons/icon-192.png', '/img/favicon.svg'];
+const VERSIONE = 'zc-app-v14';
+const SCOCCA = ['/app/', '/app/app.css', '/app/app.js', '/app/staff.js', '/app/timer.js', '/app/allenamento.js', '/app/manifest.webmanifest', '/app/icons/icon-180.png', '/app/icons/icon-192.png', '/img/favicon.svg'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VERSIONE).then((c) => c.addAll(SCOCCA)).then(() => self.skipWaiting()));

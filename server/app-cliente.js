@@ -157,7 +157,7 @@ appCliente.get('/', (req, res) => {
   const u = req.utente;
   const { data: oggi, minuti } = oraItaliana();
   const { appuntamenti } = appuntamentiCliente(u, oggi, toHHMM(minuti));
-  res.json({ ok: true, oggi, utente: { nome: u.nome, cognome: u.cognome }, appuntamenti, scheda: schedaAttiva(u.id, oggi), visite: visite(u.id) });
+  res.json({ ok: true, oggi, utente: { id: u.id, nome: u.nome, cognome: u.cognome }, appuntamenti, scheda: schedaAttiva(u.id, oggi), visite: visite(u.id) });
 });
 
 // Storico dei pesi di un esercizio (per il grafico dei progressi)
