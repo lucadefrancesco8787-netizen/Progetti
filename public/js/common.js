@@ -96,5 +96,54 @@
     return r.json();
   };
 
-  window.ZC.escape = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  /* Carosello: una carta alla volta, con frecce, pallini e contatore "1 / 9".
+     Controlli collegati al track tramite [data-carousel-prev|next|dots|count="<id track>"]. */
+  window.ZC.carousel = (track) => {
+    const id = track.id;
+    const q = (k) => document.querySelector(`[data-carousel-${k}="${id}"]`);
+    const prev = q('prev'), next = q('next'), dots = q('dots'), count = q('count');
+    const cards = () => [...track.children].filter((c) => c.offsetParent !== null);
+    const pad = () => parseFloat(getComputedStyle(track).paddingLeft) || 0;
+    const current = () => {
+      const list = cards();
+      let best = 0, dist = Infinity;
+      list.forEach((c, i) => { const d = Math.abs(c.offsetLeft - pad() - track.scrollLeft); if (d < dist) { dist = d; best = i; } });
+      return best;
+    };
+    const goTo = (i, smooth = true) => {
+      const list = cards();
+      const c = list[Math.max(0, Math.min(list.length - 1, i))];
+      if (c) track.scrollTo({ left: c.offsetLeft - pad(), behavior: smooth && !reduce ? 'smooth' : 'auto' });
+    };
+    let lastN = -1;
+    const update = () => {
+      const n = cards().length, i = current();
+      if (prev) prev.disabled = i <= 0;
+      if (next) next.disabled = i >= n - 1;
+      if (count) count.textContent = n ? `${i + 1} / ${n}` : '';
+      if (dots) {
+        if (n !== lastN) {
+          dots.innerHTML = cards().map((c, k) => `<button type="button" aria-label="Vai a ${k + 1} di ${n}"></button>`).join('');
+          lastN = n;
+        }
+        [...dots.children].forEach((d, k) => d.setAttribute('aria-current', String(k === i)));
+        dots.hidden = n <= 1;
+      }
+    };
+    prev?.addEventListener('click', () => goTo(current() - 1));
+    next?.addEventListener('click', () => goTo(current() + 1));
+    dots?.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) goTo([...dots.children].indexOf(b)); });
+    let raf = 0;
+    track.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); }, { passive: true });
+    track.addEventListener('keydown', (e) => {
+      if (e.target !== track) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); goTo(current() + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current() - 1); }
+    });
+    window.addEventListener('resize', () => { goTo(current(), false); update(); });
+    update();
+    return { update, reset: () => { track.scrollLeft = 0; update(); } };
+  };
+
+  window.ZC.escape =(s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 })();

@@ -77,6 +77,7 @@
           <div class="tcard__cta"><span>Scegli ${esc(t.nome)}</span><span>→</span></div>
         </div>
       </button>`).join('');
+    ZC.carousel($('trainers'));
     if (anim) gsap.from('.tcard', { y: 50, opacity: 0, stagger: 0.07, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: '#trainers', start: 'top 85%', once: true } });
   }).catch((e) => ($('trainers').innerHTML = `<p class="times__empty">${esc(e.message)}</p>`));
 

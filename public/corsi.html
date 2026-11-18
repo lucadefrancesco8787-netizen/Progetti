@@ -59,11 +59,19 @@
     <div class="wrap filters__inner" id="filters" role="group" aria-label="Filtra per categoria"></div>
   </div>
 
-  <section class="wrap">
-    <div class="cgrid" id="cgrid"></div>
+  <section class="carousel" aria-label="Elenco corsi">
+    <div class="wrap carousel__head">
+      <p class="carousel__count" data-carousel-count="cgrid"></p>
+      <div class="carousel__nav">
+        <button type="button" class="carousel__btn" data-carousel-prev="cgrid" aria-label="Corsi precedenti">←</button>
+        <button type="button" class="carousel__btn" data-carousel-next="cgrid" aria-label="Corsi successivi">→</button>
+      </div>
+    </div>
+    <div class="carousel__track cgrid" id="cgrid" tabindex="0" aria-label="Corsi, uno alla volta: usa le frecce"></div>
+    <div class="wrap"><div class="carousel__dots" data-carousel-dots="cgrid"></div></div>
   </section>
 
-  <section class="section planner on-dark" id="planner">
+  <section class="section planner" id="planner">
     <div class="wrap">
       <div class="planner__head">
         <div>
@@ -117,7 +125,6 @@
       <div><h4>Orari</h4><ul><li>Lun – Ven · 06:00 – 24:00</li><li>Sabato · 09:00 – 19:00</li><li>Domenica · 09:00 – 14:00</li></ul></div>
       <div><h4>Contatti</h4><ul><li>Via E. Gianturco, 27<br>80046 San Giorgio a Cremano (NA)</li><li><a href="tel:+393393589451">339 358 9451</a></li><li><a href="https://www.instagram.com/zetaclubgym/" target="_blank" rel="noopener">Instagram ↗</a></li></ul></div>
     </div>
-    <div class="footer__big" aria-hidden="true">Gym culture</div>
     <div class="footer__bottom"><span>© <span data-year></span> Zeta Club SSD a RL</span><span>Privacy · Cookie</span></div>
   </div>
 </footer>

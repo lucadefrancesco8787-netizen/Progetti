@@ -1,4 +1,4 @@
-/* Pagina corsi: filtri, griglia, dettaglio, planner settimanale */
+/* Pagina corsi: filtri, carosello, dettaglio, planner settimanale */
 (() => {
   const { reduce, hasGsap, escape: esc } = window.ZC;
   const anim = hasGsap && !reduce;
@@ -37,13 +37,14 @@
       `<button class="filter" data-f="all" aria-pressed="true">Tutti<sup>${corsi.length}</sup></button>` +
       categorie.map((c) => `<button class="filter" data-f="${esc(c.id)}" aria-pressed="false">${esc(c.nome)}<sup>${count(c.id)}</sup></button>`).join('');
 
-    /* Griglia */
+    /* Carosello */
     grid.innerHTML = corsi.map((c) => `
       <button class="course" id="${esc(c.id)}" data-cat="${esc(c.categoria)}" data-id="${esc(c.id)}" aria-label="Dettagli ${esc(c.nome)}">
         <div class="course__img"><img src="${esc(c.img)}" alt="" loading="lazy"><span class="course__cat">${esc(catName[c.categoria])}</span></div>
         <div class="course__body">
           <h3>${esc(c.nome)}</h3>
           <p>${esc(c.breve)}</p>
+          <span class="course__more">Scopri il corso <span>→</span></span>
           <div class="course__meta">
             <span>${esc(c.durata)}</span>
             <span class="intensity" title="Intensità ${c.intensita}/5">${[1, 2, 3, 4, 5].map((n) => `<i class="${n <= c.intensita ? 'on' : ''}"></i>`).join('')}</span>
@@ -51,6 +52,7 @@
         </div>
       </button>`).join('');
 
+    const car = ZC.carousel(grid);
     if (anim) {
       ScrollTrigger.batch('.course', {
         start: 'top 92%', once: true,
@@ -67,6 +69,7 @@
       const cards = [...grid.querySelectorAll('.course')];
       const apply = () => {
         cards.forEach((c) => c.classList.toggle('is-hidden', f !== 'all' && c.dataset.cat !== f));
+        car.reset();
         if (anim) {
           gsap.fromTo(cards.filter((c) => !c.classList.contains('is-hidden')), { y: 30, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.05, duration: 0.6, ease: 'power3.out' });
           ScrollTrigger.refresh();
